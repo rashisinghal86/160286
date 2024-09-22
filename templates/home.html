@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+
+
+Welcome to HouseHold Services Application 
+<hr>
+<div>
+    <ul>
+        this is a simple application that allows users to request for services such as cleaning, plumbing, electrical, etc.
+    </ul>
+</div>
+<div>
+    <p>
+        <a href="{{url_for('login_user')}}" class ="btn btn-primary">User_Login</a>
+    </p>
+</div>  
+<div>
+    <p>
+        <a href="{{url_for('login_admin')}}" class="btn btn-primary">Admin_Login</a>
+    </p>
+</div>   
+<div>
+    <p>
+        <a href="{{url_for('register')}}" class="btn btn-primary">New User! Register</a>
+    </p>
+
+</div>
+<div>
+<p>
+    <a href="{{url_for('signout')}}" class="btn btn-primary">Sign-out</a>
+</p>
+</div>
+
+<div>
+    <ul>
+        <li>Explore button, sign in later</li>
+    </ul>
+</div>
+
+{% endblock %}
