@@ -16,11 +16,51 @@ def register():
     role=Role.query.all()
     return render_template('register.html', role=role)
 
+@app.route('/register', methods=['POST'])
+def register_post():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+    role_id = request.form.get('role_id')
+    
+    
+    if not username or not password or not confirm_password:
+        flash('Please fill out the fields')
+        return redirect(url_for('register'))
+
+    if password != confirm_password:
+        flash('Passwords do not match')
+        return redirect(url_for('register')) 
+    
+    user = User.query.filter_by(username=username).first()
+
+    if user:
+        flash('Username already exists')
+        return redirect(url_for('register'))
+    
+    password_hash = generate_password_hash(password)
+
+    new_user = User(username=username, passhash=password_hash, role_id=role_id)
+
+    db.session.add(new_user)
+    db.session.commit()
+    return redirect(url_for('login'))
 
 
-@app.route('/login')
-def login_user():
-    return render_template('login_user.html')
+
+     # login routes
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login_post():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    return 'username: {}, password: {}'.format(username, password)
+
+    
+
 #prof pages
 @app.route('/login_prof')
 def login_prof():
@@ -54,14 +94,17 @@ def login_cust():
     return render_template('customer/login_cust.html')
 
 
-@app.route('/login_admin')
-def login_admin():
-    return render_template('admin_db.html')
+#@app.route('/login_admin')
+#def login_admin():
+ #   return render_template('login_admin.html')
 
 
 @app.route('/signout')
+#@auth_reqd
 def signout():
+    session.pop('user_id')
     return render_template('signout.html')
+
 @app.route('/view_prof')
 def view_prof():
     return render_template('prof.html')

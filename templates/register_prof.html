@@ -1,0 +1,67 @@
+{% extends'layout.html'%}
+
+{% block title %}
+<h1>welcome professional</h1>   
+{% endblock %}
+
+{% block content %}
+    
+
+Update your profile before you can view your appointments
+
+<form action="" class="form">
+    
+    <div class="form-group">
+        <label for="username" class="form-label">username</label>
+        <input type="text" name="email" required class="form-control">
+    
+    <div class="form-group">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" name="name" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="contact" class="form-label">Contact</label>
+        <input type="text" name="contact" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="service_type" class="form-label">Service_type</label>
+        <input type="text" name="service_type" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="experience" class="form-label">Experience</label>
+        <input type="text" name="experience" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" required class="form-control">
+    </div>  
+    <br>
+    <div class="form-group">
+        <p>
+    
+    <a href="{{ url_for('view_appointments')}}" class="btn btn-primary">Login</a>
+    </p>
+        
+    </div>
+  
+
+        
+
+    <h3>
+        list job assigned to him
+    </h3>
+    <a href="{{ url_for('view')}}">
+        <button class="btn btn-primary">View Appointments</button>
+    </a>
+    <a href="{{ url_for('accept')}}">
+        <button class="btn btn-primary">Accept Appointment</button>
+    </a>
+    <a href="{{ url_for('reject')}}">
+        <button class="btn btn-primary">Reject Appointment</button>
+    </a>
+</form>
+{% endblock %}
