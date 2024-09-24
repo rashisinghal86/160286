@@ -4,99 +4,156 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Role, Professional, Customer, Notification
 from functools import wraps
 
-
- 
 @app.route('/')
 def home():
     return (render_template('home.html'))
-    
-    #register routes
+#--registering a user-----------------------------------
 @app.route('/register')
 def register():
-    role=Role.query.all()
+    role = Role.query.all()
+    print(role)
     return render_template('register.html', role=role)
 
 @app.route('/register', methods=['POST'])
 def register_post():
-    username = request.form.get('username')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
-    role_id = request.form.get('role_id')
+    username = request.form['username']
+    password = request.form['password']
+    confirm_password = request.form['confirm_password']
+    role_id = int(request.form['role_id'])
     
     
     if not username or not password or not confirm_password:
-        flash('Please fill out the fields')
+        flash('Please enter all the fields')
         return redirect(url_for('register'))
-
+    
     if password != confirm_password:
         flash('Passwords do not match')
-        return redirect(url_for('register')) 
-    
-    user = User.query.filter_by(username=username).first()
-
-    if user:
-        flash('Username already exists')
         return redirect(url_for('register'))
     
+    user = User.query.filter_by(username=username).first()
+    if user:
+        flash ('Username already exists')
+        return redirect(url_for('register'))
+    
+    
+      
     password_hash = generate_password_hash(password)
-
-    new_user = User(username=username, passhash=password_hash, role_id=role_id)
+    
+    new_user= User(username=username, passhash=password_hash,  role_id=role_id)
 
     db.session.add(new_user)
     db.session.commit()
+
+    flash('User registered successfully')
     return redirect(url_for('login'))
+#---login of all users-----------------------------------
 
-
-
-     # login routes
-@app.route('/login', methods=['GET'])
+@app.route('/login')
 def login():
     return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login_post():
-    username = request.form.get('username')
-    password = request.form.get('password')
-    return 'username: {}, password: {}'.format(username, password)
+    username = request.form['username']
+    password = request.form['password']
 
+
+    if not username or not password:
+        flash("please enter all the fields")
+        return redirect(url_for('login'))
+    
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        flash('Username has been taken')
+        return redirect(url_for('login'))
+    
+    
+    if not check_password_hash(user.passhash, password):
+        flash('Incorrect password')
+        return redirect(url_for('login'))
+    
+    session['user_id']= user.id
+    flash('you have logged in successfully')
+    #check role of user and redirect to respective page
+    role = Role.query.get (user.role_id)
+    #check code at admin.txt
+    if role.name =='admin':
+        return render_template('admin_db.html')
+    #if role.name == 'admin':
+     #   existing_admin = User.query.filter_by(role_id=role.id).first()
+      #  if existing_admin:
+       #     flash('An admin user already exists. Cannot create another admin.')
+        #    #return redirect(url_for('user_creation_form'))
+         #   return render_template('admin_db.html')
     
 
-#prof pages
-@app.route('/login_prof')
-def login_prof():
-    return render_template('professional/login_prof.html')
-#accept or reject appointments
-@app.route('/accept_appointments')
-def accept_appointments():
-    return render_template('professional/accept_appointments.html')
-#view appointments
-@app.route('/view_appointments_prof')
-def view_appointments_prof():
-    return render_template('professional/view_appointments_prof.html')
-#view profile
-@app.route('/view')
-def view():
-    return render_template('appointment/view.html')
+    elif role.name == 'Professional':
+        professional = Professional.query.filter_by(user_id=user.id).first()
+        if professional:
+            #return ('already registered professional page')
+            return redirect(url_for('prof_db', username=professional.users.username))
+        else:
+            return redirect(url_for('register_pdb'))
+        
+    elif role.name == 'Customer':
+        customer = Customer.query.filter_by(user_id=user.id).first()
+        if customer:
+            #return ('already registered customer page')
+            return redirect(url_for('cust_db', username=customer.users.username))
+        else:
+            return redirect(url_for('register_cdb'))
+    else:
+        return redirect(url_for('login'))
+    
+@app.route('/register_pdb')
+def register_pdb():
+    return render_template('register_pdb.html')
 
-@app.route('/accept')
-def accept():
-    return render_template('appointment/accept.html')
+@app.route('/register_pdb', methods=['POST'])
+def register_pdb_post():
+    
+    user = User.query.get(session['user_id'])
+    professional= Professional.query.filter_by(user_id=user.id).first()
+    if professional:
+        #return ('already registered professional page' )
+        return redirect(url_for('prof_db', name=professional.users.name))
+    
+    email = request.form['email']
+    name = request.form['name']
+    username = request.form['username']
+    contact = request.form['contact']
+    service_type = request.form['service_type']
+    experience = request.form['experience']
+    
+    
+    password    = request.form['password']
+    
+    if not email or not name or not username or not contact or not service_type or not experience or not password:
+        flash('Please enter all the fields')
+    
+        return redirect(url_for('register_pdb'))
+    
+    new_professional = Professional(user_id=user.id, email=email, name=name, username=username, contact=contact, service_type=service_type, experience=experience)
+    db.session.add(new_professional)
+    db.session.commit()
+    
+    #Check if professional-specific details are already provided\    
+    flash('professional registered successfully')
+    return redirect(url_for('prof_db'))
 
-@app.route('/reject')
-def reject():
-    return render_template('appointment/reject.html')
 
 
+@app.route('/register_cdb')
+def register_cdb():
+    return render_template('register_cdb.html')
 
+@app.route('/prof_db')
+def prof_db():
+    return render_template('prof_db.html')
 
-@app.route('/login_cust')
-def login_cust():
-    return render_template('customer/login_cust.html')
-
-
-#@app.route('/login_admin')
-#def login_admin():
- #   return render_template('login_admin.html')
+@app.route('/cust_db')
+def cust_db():
+    return render_template('cust_db.html')
 
 
 @app.route('/signout')
@@ -104,45 +161,3 @@ def login_cust():
 def signout():
     session.pop('user_id')
     return render_template('signout.html')
-
-@app.route('/view_prof')
-def view_prof():
-    return render_template('prof.html')
-@app.route('/add_prof')
-def add_prof():
-    return render_template('professional/add_prof.html')
-
-@app.route('/flag_prof')
-def flag_prof():
-    return render_template('professional/flag_prof.html')
-
-
-
-@app.route('/view_services')
-def view_services():
-    return render_template('services/services.html')
-
-@app.route('/add_services')
-def add_services():
-    return render_template('services/add_services.html')
-
-@app.route('/edit_services')
-def edit_services():
-    return render_template('services/edit_services.html')
-
-@app.route('/delete_services')
-def delete_services():
-    return render_template('services/delete_services.html')
-
-
-@app.route('/view_user2')
-def view_cust():
-    return render_template('cust.html')
-
-@app.route('/view_appointments')
-def view_appointments():
-    return render_template('appointments.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-    

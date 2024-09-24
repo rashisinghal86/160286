@@ -23,7 +23,9 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     is_flagged = db.Column(db.Boolean, nullable=False, default=False)
     
-
+   
+    roles= db.relationship('Role', backref='user', lazy=True)
+   
 notifications = db.relationship('Notification', backref='user', lazy=True)
 
 class Notification(db.Model):
@@ -35,6 +37,7 @@ class Notification(db.Model):
 class Professional(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    email  = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
@@ -53,11 +56,18 @@ class Customer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
     name = db.Column(db.String(80), nullable=False)
+    email  = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
     #date= db.Column(db.date, nullable=False)
     users = db.relationship('User', backref='customer', lazy=True)
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    #admin_level = db.Column(db.String(64), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref='admin', lazy=True)
 
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)

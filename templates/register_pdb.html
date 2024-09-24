@@ -9,11 +9,11 @@
 
 Update your profile before you can view your appointments
 
-<form action="" class="form">
+<form action="{{url_for('register_pdb')}}" class="form" method="POST">
     
     <div class="form-group">
-        <label for="username" class="form-label">username</label>
-        <input type="text" name="email" required class="form-control">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" name="email" required class="form-control">
     
     <div class="form-group">
         <label for="name" class="form-label">Name</label>
@@ -25,7 +25,7 @@ Update your profile before you can view your appointments
     </div>
     <div class="form-group">
         <label for="contact" class="form-label">Contact</label>
-        <input type="text" name="contact" required class="form-control">
+        <input type="number" name="contact" required class="form-control">
     </div>
     <div class="form-group">
         <label for="service_type" class="form-label">Service_type</label>
@@ -33,7 +33,7 @@ Update your profile before you can view your appointments
     </div>
     <div class="form-group">
         <label for="experience" class="form-label">Experience</label>
-        <input type="text" name="experience" required class="form-control">
+        <input type="number" name="experience" required class="form-control">
     </div>
     <div class="form-group">
         <label for="password" class="form-label">Password</label>
@@ -41,10 +41,12 @@ Update your profile before you can view your appointments
     </div>  
     <br>
     <div class="form-group">
-        <p>
-    
-    <a href="{{ url_for('view_appointments')}}" class="btn btn-primary">Login</a>
-    </p>
+        <div class="form-group">
+            <p>
+                <button type="submit" class="btn btn-primary">Profile Upload</button>
+            </p>
+        </div>
+        
         
     </div>
   
@@ -54,13 +56,13 @@ Update your profile before you can view your appointments
     <h3>
         list job assigned to him
     </h3>
-    <a href="{{ url_for('view')}}">
+    <a href="#">
         <button class="btn btn-primary">View Appointments</button>
     </a>
-    <a href="{{ url_for('accept')}}">
+    <a href="#">
         <button class="btn btn-primary">Accept Appointment</button>
     </a>
-    <a href="{{ url_for('reject')}}">
+    <a href="#">
         <button class="btn btn-primary">Reject Appointment</button>
     </a>
 </form>
