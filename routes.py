@@ -5,7 +5,7 @@ from models import db, User, Role, Professional, Customer, Notification
 from functools import wraps
 
 @app.route('/')
-
+#@auth_reqd
 def home():
     return (render_template('home.html'))
 #--1. registering a user-----------------------------------
@@ -194,4 +194,7 @@ def signout():
     session.pop('user_id')
     return render_template('signout.html')
 
-
+@app.route('/profile')
+def profile():
+    
+    return render_template('profile.html')

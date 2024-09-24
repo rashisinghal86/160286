@@ -105,14 +105,16 @@ def add_roles():
 with app.app_context():
     db.create_all()
     add_roles()
-    
 
-    admin_role = Role.query.filter_by(name='admin').first()
+     # Creating admin credientials automiatcally when project is run for the first time.
+    admin_role = Role.query.filter_by(name='Admin').first()
     if admin_role:
         admin_role_id = admin_role.id
         if not User.query.filter_by(role_id=admin_role_id).first():
-     
             password_hash = generate_password_hash('admin')
-            admin = User(username='admin', passhash=password_hash, role_id=admin_role_id, is_admin=True, is_flagged=False)
+            admin = User(username='admin', passhash=password_hash, role_id=admin_role_id)
             db.session.add(admin)
             db.session.commit()
+    
+
+    
