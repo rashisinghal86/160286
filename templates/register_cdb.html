@@ -1,1 +1,60 @@
 cust page for 1st time registeration and creating profile
+
+{% extends 'layout.html' %}
+{% block name %}
+    customer dashboaard
+{% endblock %}
+
+{% block title %}
+<h1>welcome customer name placeholder</h1>   
+{% endblock %}
+
+{% block content %}
+    
+
+Update your profile before you can view your appointments
+
+<form action="" class="form" method = "POST">
+    
+    <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" name="email" required class="form-control">
+    </div>    
+    <div class="form-group">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" name="name" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" required class="form-control">
+    </div>
+    <div class="form-group">    
+        <label for="contact" class="form-label">Contact</label>
+        <input type="number" name="contact" required class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" name="location" required class="form-control">
+    </div>
+        <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" required class="form-control">
+    </div>  
+    <br>
+    
+    <div class="form-group button-container">
+        <input type="submit" value="Show my page" class="btn btn-primary">
+    </div>
+
+gets to see all the services
+
+list of services 
+<a href="#">Open request</a>
+<a href="#">close request</a>
+<a href="#">write reviews</a>
+<a href="#">suggestions</a>
+
+
+</form>
+{% endblock %}
+  

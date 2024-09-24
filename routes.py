@@ -5,9 +5,10 @@ from models import db, User, Role, Professional, Customer, Notification
 from functools import wraps
 
 @app.route('/')
+
 def home():
     return (render_template('home.html'))
-#--registering a user-----------------------------------
+#--1. registering a user-----------------------------------
 @app.route('/register')
 def register():
     role = Role.query.all()
@@ -46,7 +47,7 @@ def register_post():
 
     flash('User registered successfully')
     return redirect(url_for('login'))
-#---login of all users-----------------------------------
+#---2. login of all users and redirection to respective/ profile update or dashboard-----------------------------------
 
 @app.route('/login')
 def login():
@@ -105,6 +106,7 @@ def login_post():
     else:
         return redirect(url_for('login'))
     
+#---2a proffessional registration-----------------------------------
 @app.route('/register_pdb')
 def register_pdb():
     return render_template('register_pdb.html')
@@ -141,11 +143,41 @@ def register_pdb_post():
     flash('professional registered successfully')
     return redirect(url_for('prof_db'))
 
-
+#---2b customer registration-----------------------------------
 
 @app.route('/register_cdb')
 def register_cdb():
     return render_template('register_cdb.html')
+
+
+@app.route('/register_cdb', methods=['POST'])
+def register_cdb_post():
+    
+    user = User.query.get(session['user_id'])
+    customer = Customer.query.filter_by(user_id=user.id).first()
+    if customer:
+        #return ('already registered customer page' )
+        return redirect(url_for('cust_db', name=customer.users.name))
+    
+    email = request.form['email']
+    name = request.form['name']
+    username = request.form['username']
+    contact = request.form['contact']
+    location = request.form['location']
+    password = request.form['password']
+    
+    if not email or not name or not username or not contact or not location or not password:
+        flash('Please enter all the fields')
+        return redirect(url_for('register_cdb'))
+    
+    new_customer = Customer(user_id=user.id, email=email, name=name, username=username, contact=contact, location=location)
+    db.session.add(new_customer)
+    db.session.commit()
+    
+    #Check if customer-specific details are already provided\    
+    flash('Customer registered successfully')
+    return redirect(url_for('cust_db'))
+
 
 @app.route('/prof_db')
 def prof_db():
@@ -161,3 +193,5 @@ def cust_db():
 def signout():
     session.pop('user_id')
     return render_template('signout.html')
+
+
