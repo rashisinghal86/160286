@@ -2,46 +2,98 @@
 
 {% block title %}
     Profile Page
-    
 {% endblock %}
 
 {% block content %}
-    <h1 class="display-1">
-        hello
-        <span class="text-muted">@{{user.username}}</span>
-    </h1>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Profile details on the left -->
+            <div class="col-md-6">
+                <h1 class="display-4">
+                    Hello
+                    <span class="text-muted">@{{user.username}}</span>
+                </h1>
 
-    <div class="profile-pic">
-        <img src="https://api.dicebear.com/9.x/lorelei/svg?seed={{user.username}}" width="100" alt="">
+                <div class="profile-pic">
+                    <img src="https://api.dicebear.com/9.x/lorelei/svg?seed={{user.username}}" width="100" alt="">
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        {{ professional.username }}'s Profile Details
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-4 font-weight-bold">Email</div>
+                            <div class="col-sm-8">{{ professional.email }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 font-weight-bold">Name</div>
+                            <div class="col-sm-8">{{ professional.name }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 font-weight-bold">Username</div>
+                            <div class="col-sm-8">{{ professional.username }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 font-weight-bold">Contact</div>
+                            <div class="col-sm-8">{{ professional.contact }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 font-weight-bold">Service Type</div>
+                            <div class="col-sm-8">{{ professional.service_type }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 font-weight-bold">Experience</div>
+                            <div class="col-sm-8">{{ professional.experience }}</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{url_for('signout')}}" class="btn btn-outline-danger mt-4">Signout</a>
+            </div>
+
+            <!-- Edit form on the right -->
+            <div class="col-md-6">
+                <h2>Edit Profile</h2>
+                <form action="" method="post" class="form mt-4">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email -|- {{ professional.email }}</label>
+                        <input type="email" name="name" id="name" value="{{user.name}}" class='form-control'>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="form-label">Name -|- {{ professional.name}} </label>
+                        <input type="text" name="name" id="name" value="{{user.name}}" class='form-control'>
+                    </div>
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username -|- {{ professional.username }}</label>
+                        <input type="text" name="username" id="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cpassword" class="form-label">Current Password</label>
+                        <input type='password' name='cpassword' id="cpassword" class="form-control" required>  
+                    </div>
+                    <div class="form-group">
+                        <label for="npassword" class="form-label">New Password</label>
+                        <input type='password' name='password' id="password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact" class="form-label">Contact -|- {{ professional.contact}}</label>
+                        <input type="number" name="name" id="name" value="{{user.name}}" class='form-control'>
+                    </div>
+                    <div class="form-group">
+                        <label for="service_type" class="form-label">Service_type -|- {{ professional.service_type}} </label>
+                        <input type="text" name="name" id="name" value="{{user.name}}" class='form-control'>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience" class="form-label">Experience -|- {{ professional.experience }}</label>
+                        <input type="text" name="name" id="name" value="{{user.name}}" class='form-control'>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Update" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    
-
-
-    <a href="{{url_for('signout')}}" class="btn btn-outline-danger">Signout</a>
-    
-    <! -- form to create password or username -- >
-    <form action="" method="post" class="form">
-        <div class="form-group">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" name="username" id="username" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="cpassword" class="form-label">Current Password</label>
-            <input type='password' name='cpassword' id="cpassword" class="form-control" required>  
-        </div>
-        <div class="form-group">
-            <label for="npassword" class="form-label">New Password</label>
-            <input type='password' name='password' id="password" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" name="name" id="name" value="{{user.name}}" class='form-control'>
-            <br>
-        </div>
-
-        <div class="form-group">
-            <input type="submit" value="Update" class="btn btn-primary">
-        </div>
-    </form>
-    
 {% endblock %}
