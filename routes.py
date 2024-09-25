@@ -3,11 +3,27 @@ from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Role, Professional, Customer, Notification
 from functools import wraps
-
+#----- home page-----
 @app.route('/')
-#@auth_reqd
 def home():
-    return (render_template('home.html'))
+    # if user_id is in session, then render the home page
+    if 'user_id' in session:
+        return render_template('home.html')
+    else:
+        flash('Please login to access the page')
+        return redirect(url_for('login'))
+#-------decorator for authentication----------------    
+#decorator for auth_required
+def auth_reqd(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        if 'user_id' in session:
+                                           return func(*args, **kwargs)
+        else:
+            flash('Please login to continue')
+            return redirect(url_for('login'))
+    return inner
+
 #--1. registering a user-----------------------------------
 @app.route('/register')
 def register():
@@ -78,7 +94,7 @@ def login_post():
     #check role of user and redirect to respective page
     role = Role.query.get (user.role_id)
     #check code at admin.txt
-    if role.name =='admin':
+    if role.name =='Admin':
         return render_template('admin_db.html')
     #if role.name == 'admin':
      #   existing_admin = User.query.filter_by(role_id=role.id).first()
@@ -187,14 +203,63 @@ def prof_db():
 def cust_db():
     return render_template('cust_db.html')
 
-
+#-----3. signout-------------------------
 @app.route('/signout')
-#@auth_reqd
+@auth_reqd
 def signout():
     session.pop('user_id')
-    return render_template('signout.html')
+    return render_template('home.html')
 
 @app.route('/profile')
+@auth_reqd
 def profile():
+    user = User.query.get(session['user_id'])
+    role = Role.query.get (user.role_id)
+    #if user is admin, redirect to profile_admin page
+    if role.name == 'Admin':
+        return render_template('profile_admin.html', user=user)
+    elif role.name == 'Professional':
+        professional = Professional.query.filter_by(user_id=user.id).first()
+        return render_template('profile_prof.html', user=user, professional=professional)
+    elif role.name == 'Customer':
+        customer = Customer.query.filter_by(user_id=user.id).first()
+        return render_template('profile_cust.html', user=user, customer=customer)
+    return render_template('profile.html', user=user)
+   
+@app.route('/profile', methods=['POST'])
+@auth_reqd
+def profile_post():
+    username=request.form.get('username')
+    cpassword=request.form.get('cpassword')
+    password=request.form.get('password')
+    name=request.form.get('name')
+
+    if not username or not cpassword or not password:
+        flash('Please fill out the fields')
+        return redirect(url_for('profile'))
     
-    return render_template('profile.html')
+    #check if current password entered to update is correct
+    user = User.query.get(session['user_id'])
+    if not check_password_hash(user.passhash, cpassword):
+        flash('Incorrect current password')
+        return redirect(url_for('profile'))
+    #check if new username id available
+    if username != user.username:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            flash('Username already exists')
+            return redirect(url_for('profile'))
+        
+    new_password_hash = generate_password_hash(password)
+    user.username = username
+    user.passhash = new_password_hash
+    user.name = name
+
+    db.session.commit()
+    flash('Profile updated successfully')
+    return redirect(url_for('profile'))
+    
+
+    
+    
+    
