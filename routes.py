@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Role, Professional, Customer, Notification
+from models import db, User, Role,Admin, Professional, Customer, Notification
 from functools import wraps
 #----- home page-----
 @app.route('/')
@@ -16,9 +16,9 @@ def home():
 #decorator for auth_required
 def auth_reqd(func):
     @wraps(func)
-    def inner(*args, **kwargs):
+    def inner(*args,**kwargs):
         if 'user_id' in session:
-                                           return func(*args, **kwargs)
+            return func(*args,**kwargs)
         else:
             flash('Please login to continue')
             return redirect(url_for('login'))
@@ -90,12 +90,19 @@ def login_post():
         return redirect(url_for('login'))
     
     session['user_id']= user.id
+   
     flash('you have logged in successfully')
     #check role of user and redirect to respective page
     role = Role.query.get (user.role_id)
     #check code at admin.txt
     if role.name =='Admin':
-        return render_template('admin_db.html')
+        admin = Admin.query.filter_by(user_id=user.id).first()
+        if admin:
+            
+            return redirect(url_for('admin_db', username=admin.user.username))
+            
+        else:
+            return redirect(url_for('register_adb'))
     #if role.name == 'admin':
      #   existing_admin = User.query.filter_by(role_id=role.id).first()
       #  if existing_admin:
@@ -120,7 +127,37 @@ def login_post():
         else:
             return redirect(url_for('register_cdb'))
     else:
+        #return redirect(url_for('home'))
         return redirect(url_for('login'))
+    
+#---2a admin registration-----------------------------------
+@app.route('/register_adb')
+def register_adb():
+    return render_template('register_adb.html')
+
+@app.route('/register_adb', methods=['POST'])
+def register_adb_post():
+    
+    user = User.query.get(session['user_id'])
+    admin = Admin.query.filter_by(user_id=user.id).first()
+    if admin:
+        #return ('already registered admin page' )
+        return redirect(url_for('admin_db', username=admin.user.username))
+        #return redirect(url_for('admin_db', name=admin.user.name))
+    name = request.form['name']
+    
+    
+    if not name:
+        flash('Please enter all the fields')
+        return redirect(url_for('register_adb'))
+    
+    new_admin = Admin(user_id=user.id, name=name)
+    db.session.add(new_admin)
+    db.session.commit()
+    
+    #Check if admin-specific details are already provided\    
+    flash('Admin registered successfully')
+    return redirect(url_for('admin_db'))
     
 #---2a proffessional registration-----------------------------------
 @app.route('/register_pdb')
@@ -138,20 +175,18 @@ def register_pdb_post():
     
     email = request.form['email']
     name = request.form['name']
-    username = request.form['username']
+    #username = request.form['username']
     contact = request.form['contact']
     service_type = request.form['service_type']
     experience = request.form['experience']
     
     
-    password    = request.form['password']
-    
-    if not email or not name or not username or not contact or not service_type or not experience or not password:
+    #password    = request.form['password']
+    if not email or not name or not contact or not service_type or not experience:
         flash('Please enter all the fields')
-    
         return redirect(url_for('register_pdb'))
     
-    new_professional = Professional(user_id=user.id, email=email, name=name, username=username, contact=contact, service_type=service_type, experience=experience)
+    new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience)
     db.session.add(new_professional)
     db.session.commit()
     
@@ -177,16 +212,16 @@ def register_cdb_post():
     
     email = request.form['email']
     name = request.form['name']
-    username = request.form['username']
+    #username = request.form['username']
     contact = request.form['contact']
     location = request.form['location']
     password = request.form['password']
     
-    if not email or not name or not username or not contact or not location or not password:
+    if not email or not name or not contact or not location or not password:
         flash('Please enter all the fields')
         return redirect(url_for('register_cdb'))
     
-    new_customer = Customer(user_id=user.id, email=email, name=name, username=username, contact=contact, location=location)
+    new_customer = Customer(user_id=user.id, email=email, name=name, contact=contact, location=location)
     db.session.add(new_customer)
     db.session.commit()
     
@@ -194,6 +229,10 @@ def register_cdb_post():
     flash('Customer registered successfully')
     return redirect(url_for('cust_db'))
 
+@app.route('/admin_db')
+def admin_db():
+     return render_template('admin_db.html')
+     
 
 @app.route('/prof_db')
 def prof_db():
@@ -215,6 +254,7 @@ def signout():
 def profile():
     user = User.query.get(session['user_id'])
     role = Role.query.get (user.role_id)
+   
     #if user is admin, redirect to profile_admin page
     if role.name == 'Admin':
         return render_template('profile_admin.html', user=user)
@@ -229,35 +269,45 @@ def profile():
 @app.route('/profile', methods=['POST'])
 @auth_reqd
 def profile_post():
-    username=request.form.get('username')
-    cpassword=request.form.get('cpassword')
-    password=request.form.get('password')
-    name=request.form.get('name')
-
-    if not username or not cpassword or not password:
-        flash('Please fill out the fields')
-        return redirect(url_for('profile'))
-    
-    #check if current password entered to update is correct
+    # if user is admin, redirect to profile_admin page
     user = User.query.get(session['user_id'])
-    if not check_password_hash(user.passhash, cpassword):
-        flash('Incorrect current password')
-        return redirect(url_for('profile'))
-    #check if new username id available
-    if username != user.username:
-        user = User.query.filter_by(username=username).first()
-        if user:
-            flash('Username already exists')
+    role = Role.query.get(user.role_id)
+    admin = Admin.query.filter_by(user_id=user.id).first()
+    if role.name == 'Admin':
+        username=request.form.get('username')
+        cpassword=request.form.get('cpassword')
+        password=request.form.get('password')
+        admin.name=request.form.get('name')
+
+        if not username or not cpassword or not password:
+            flash('Please fill out the fields')
             return redirect(url_for('profile'))
         
-    new_password_hash = generate_password_hash(password)
-    user.username = username
-    user.passhash = new_password_hash
-    user.name = name
+        #check if current password entered to update is correct
+        user = User.query.get(session['user_id'])
+        if not check_password_hash(user.passhash, cpassword):
+            flash('Incorrect current password')
+            return redirect(url_for('profile'))
+        #check if new username id available
+        if username != user.username:
+            user = User.query.filter_by(username=username).first()
+            if user:
+                flash('Username already exists')
+                return redirect(url_for('profile'))      
+            
+        new_password_hash = generate_password_hash(password)
+        user.username = username
+        user.passhash = new_password_hash
+        user.name = admin.name
 
-    db.session.commit()
-    flash('Profile updated successfully')
-    return redirect(url_for('profile'))
+        db.session.commit()
+        flash('Profile updated successfully')
+        return redirect(url_for('profile'))
+
+         
+
+        
+    
     
 
     

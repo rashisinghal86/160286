@@ -39,7 +39,7 @@ class Professional(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     email  = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    #username = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     service_type = db.Column(db.String(80), nullable=False)
     #expertise = db.Column(db.String(80), nullable=False)
@@ -57,7 +57,7 @@ class Customer(db.Model):
     
     name = db.Column(db.String(80), nullable=False)
     email  = db.Column(db.String(80), nullable=False)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    #username = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
     #date= db.Column(db.date, nullable=False)
@@ -65,7 +65,7 @@ class Customer(db.Model):
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #admin_level = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(80), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='admin', lazy=True)
 

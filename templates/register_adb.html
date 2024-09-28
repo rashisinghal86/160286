@@ -1,0 +1,30 @@
+{% extends'layout.html'%}
+
+{% block title %}
+<h1>welcome admin</h1>   
+{% endblock %}
+
+{% block content %}
+    
+Enter your name to register as an admin
+
+<form action="{{url_for('register_adb')}}" class="form" method="POST">
+    
+   
+    
+    <div class="form-group">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" name="name" required class="form-control">
+    </div>
+    <br>
+    <div class="form-group">
+        <div class="form-group">
+            <p>
+                <button type="submit" class="btn btn-primary">Profile Upload</button>
+            </p>
+        </div>
+    </div>
+  
+
+    </form>
+{% endblock %}
