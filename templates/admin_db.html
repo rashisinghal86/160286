@@ -1,2 +1,89 @@
-admin page after login
 {% extends 'layout.html' %}
+{% block title %}
+Admin dashboard
+{% endblock %}
+{% block content %}
+<h1 class="display">Admin dashboard</h1>
+
+<a href="{{url_for('add_category')}}" class="btn btn-success">
+    <i class="fa5 fa-plus"></i>
+    Add</a>
+
+<h2 class="display-2">Categories</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Category ID</th>
+            <th>Category Name</th>
+            <th>No of Services</th>
+            <th>Actions</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+       {% for category in categories %}
+       <tr>
+            <td>{{category.id}}</td>
+            <td>{{category.name}}</td>
+            <td>{{category.services|length}}</td>
+            <td>
+       
+            <a href="{{url_for('show_category', id=category.id)}}" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+                Show
+            </a>
+            <a href="{{url_for('edit_category', id=category.id)}}" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Edit
+            </a>
+            <a href="{{url_for('delete_category', id=category.id)}}" class="btn btn-danger">
+                <i class="fas fa-trash"></i>
+                Delete
+            </a>
+        </td>
+        </tr>
+         {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+<h2 class="display-2">Summary:</h2>
+<div>
+    <canvas id="myChart"></canvas>
+  </div>
+  
+  
+  
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    const ctx = document.getElementById('myChart');
+  
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{category_names|safe}},
+        datasets: [{
+          label: '# of Products',
+          data: {{category_sizes|safe}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+
+    
+{% endblock %}
+    

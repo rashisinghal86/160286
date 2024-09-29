@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Delete category
+{% endblock %}
+
+{% block content %}
+<h1 class="display-1">Delete category</h1>
+<p class="f-3">Are you sure you want to delete {{category.name}}</p>
+
+<form action="" method="post" class="form">
+    <div class="form_group">
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash"></i> 
+            delete
+        </button>
+    </div>
+</form>
+{% endblock %}

@@ -1,17 +1,9 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Role,Admin, Professional, Customer, Notification
+from models import db, User, Role,Admin, Professional, Customer, Category, Service
 from functools import wraps
-#----- home page-----
-@app.route('/')
-def home():
-    # if user_id is in session, then render the home page
-    if 'user_id' in session:
-        return render_template('home.html')
-    else:
-        flash('Please login to access the page')
-        return redirect(url_for('login'))
+
 #-------decorator for authentication----------------    
 #decorator for auth_required
 def auth_reqd(func):
@@ -22,7 +14,51 @@ def auth_reqd(func):
         else:
             flash('Please login to continue')
             return redirect(url_for('login'))
+            
     return inner
+
+def admin_reqd(func):
+    @wraps(func)
+    def inner(*args,**kwargs):
+        if 'user_id' not in session:
+            flash('Please login to continue')
+            return redirect(url_for('login'))
+        user = User.query.get(session['user_id'])
+        role = Role.query.get(user.role_id)
+        if role.name != 'Admin':
+            flash('You are not authorized to access this page')
+            return redirect(url_for('home'))
+        return func(*args,**kwargs)
+    return inner
+
+    
+
+#----- home page-----
+@app.route('/')
+@auth_reqd
+def home():
+    user = User.query.get(session['user_id'])
+    session['user_id']= user.id
+    #check role of user and redirect to respective page
+    role = Role.query.get (user.role_id)
+    #check code at admin.txt
+    if role.name =='Admin':
+        admin = Admin.query.filter_by(user_id=user.id).first()
+        if admin:
+            return redirect(url_for('admin_db', username=admin.user.username))
+        
+    elif role.name == 'Professional':
+        professional = Professional.query.filter_by(user_id=user.id).first()
+        if professional:
+            return redirect(url_for('prof_db', username=professional.users.username))
+    elif role.name == 'Customer':
+        customer = Customer.query.filter_by(user_id=user.id).first()
+        if customer:
+            return redirect(url_for('cust_db', username=customer.users.username))
+    return render_template('home.html', user=user)
+    
+   
+
 
 #--1. registering a user-----------------------------------
 @app.route('/register')
@@ -103,12 +139,7 @@ def login_post():
             
         else:
             return redirect(url_for('register_adb'))
-    #if role.name == 'admin':
-     #   existing_admin = User.query.filter_by(role_id=role.id).first()
-      #  if existing_admin:
-       #     flash('An admin user already exists. Cannot create another admin.')
-        #    #return redirect(url_for('user_creation_form'))
-         #   return render_template('admin_db.html')
+ 
     
 
     elif role.name == 'Professional':
@@ -229,9 +260,9 @@ def register_cdb_post():
     flash('Customer registered successfully')
     return redirect(url_for('cust_db'))
 
-@app.route('/admin_db')
-def admin_db():
-     return render_template('admin_db.html')
+#@app.route('/admin_db')
+#def admin_db():
+ #    return render_template('admin_db.html')
      
 
 @app.route('/prof_db')
@@ -304,6 +335,253 @@ def profile_post():
         flash('Profile updated successfully')
         return redirect(url_for('profile'))
 
+#-------admin pages-----------------------------------
+
+
+
+
+
+@app.route('/admin_db')
+@admin_reqd
+def admin_db():
+    categories=Category.query.all()
+    category_names = [category.name for category in categories]
+    category_sizes = [len(category.services) for category in categories]
+
+    return render_template('admin_db.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
+#-----------------category pages-----------------------------------
+
+@app.route('/category/add')
+@admin_reqd
+def add_category():
+    return render_template('category/add.html')
+
+@app.route('/category/add',methods=['POST'])
+@admin_reqd
+def add_category_post():
+    name = request.form.get('name')
+    if not name:
+        flash('Please fill out the fields')
+        return redirect(url_for('add_category'))
+    category = Category(name=name)
+    db.session.add(category)
+    db.session.commit()
+    flash("Category added successfully")
+    return redirect(url_for('admin_db'))
+
+@app.route('/category/<int:id>/')
+@admin_reqd
+def show_category(id):
+    category=Category.query.get(id)
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    return render_template('category/show.html', category=category)
+    #return("show category")
+
+@app.route('/category/<int:id>/edit')
+@admin_reqd
+def edit_category(id):
+    category=Category.query.get(id)
+    
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    return render_template("category/edit.html", category=category)
+
+@app.route('/category/<int:id>/edit', methods=['POST'])
+@admin_reqd
+def edit_category_post(id):
+    category=Category.query.get(id)    
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin'))
+    name=request.form.get('name')
+    if not name:
+        flash('Please fill out the fields')
+        return redirect(url_for('edit_category',id=id))
+    category.name=name
+    db.session.commit()
+    flash('Category updated successfully')  
+    return redirect(url_for('admin_db'))
+    
+
+@app.route('/category/<int:id>/delete')
+@auth_reqd
+def delete_category(id):
+    category = Category.query.get(id)
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    return render_template('category/delete.html', category=category)
+
+@app.route('/category/<int:id>/delete', methods=['POST'])
+@auth_reqd
+def delete_category_post(id):
+    category = Category.query.get(id)
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    db.session.delete(category)
+    db.session.commit()
+    flash('Category deleted successfully')
+    return redirect(url_for('admin_db'))
+
+#----------- services offered-----------------------------------
+@app.route('/service/add/<int:category_id>')
+@admin_reqd
+def add_service(category_id):
+    category=Category.query.get(category_id)
+    categories=Category.query.all() 
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    now=datetime.now().strftime('%Y-%m-%d')
+    return render_template('service/add.html', category=category, categories=categories, now=now)
+
+@app.route('/service/add/', methods=['POST'])
+@admin_reqd
+def add_service_post():
+    name = request.form.get('name')
+    price = request.form.get('price')
+    category_id = request.form.get('category_id')
+    quantity = request.form.get('quantity')
+    man_date = request.form.get('man_date')
+    
+    category = Category.query.get(category_id)
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    if not name or not price or not quantity or not man_date:
+        flash('Please fill out the fields')
+        return redirect(url_for('add_service', category_id=category_id))
+    
+    try:
+        quantity=int(quantity)
+        price=float(price)
+        man_date=datetime.strptime(man_date, '%Y-%m-%d')
+    except ValueError:
+        flash('Invalid quantity or price')
+        return redirect(url_for('add_service', category_id=category_id))
+    
+    if quantity <= 0 or price <= 0:
+        flash('Quantity or price cannot be negative')
+        return redirect(url_for('add_service', category_id=category_id))
+    
+    if man_date > datetime.now():
+        flash('Manufacture date cannot be in the future')
+        return redirect(url_for('add_service', category_id=category_id))
+
+    service = Service(name=name, price=price, category=category, quantity=quantity, man_date=man_date)
+    db.session.add(service)
+    db.session.commit()
+    flash("Category added successfully")
+    return redirect(url_for('show_category', id=category_id))
+
+#-----------------service pages-----------------------------------
+
+@app.route('/service/<int:id>/edit')
+@admin_reqd
+def edit_service(id):
+    service=Service.query.get(id)
+    categories=Category.query.all() 
+    return render_template('service/edit.html', categories=categories,service=service)
+
+@app.route('/service/<int:id>/edit', methods=['POST'])
+@admin_reqd
+def edit_service_post(id):
+    name = request.form.get('name')
+    price = request.form.get('price')
+    category_id = request.form.get('category_id')
+    quantity = request.form.get('quantity')
+    man_date = request.form.get('man_date')
+    
+    category = Category.query.get(category_id)
+    if not category:
+        flash('Category does not exist')
+        return redirect(url_for('admin_db'))
+    if not name or not price or not quantity or not man_date:
+        flash('Please fill out the fields')
+        return redirect(url_for('add_service', category_id=category_id))
+    
+    try:
+        quantity=int(quantity)
+        price=float(price)
+        man_date=datetime.strptime(man_date, '%Y-%m-%d')
+    except ValueError:
+        flash('Invalid quantity or price')
+        return redirect(url_for('add_service', category_id=category_id))
+    
+    if quantity <= 0 or price <= 0:
+        flash('Quantity or price cannot be negative')
+        return redirect(url_for('add_service', category_id=category_id))
+    
+    if man_date > datetime.now():
+        flash('Manufacture date cannot be in the future')
+        return redirect(url_for('add_service', category_id=category_id))
+
+    service=Service.query.get(id)
+    service.name=name  
+    service.price=price
+    service.category=category
+    service.quantity=quantity
+    service.man_date=man_date
+    db.session.commit()
+    flash("Category edited successfully")
+    return redirect(url_for('show_category', id=category_id))
+
+
+@app.route('/service/<int:id>/delete')
+@admin_reqd
+def delete_service(id):
+
+    service = Service.query.get(id)
+    if not service:
+        flash('Service does not exist')
+        return redirect(url_for('admin_db'))
+    return render_template('service/delete.html', service=service)
+
+@app.route('/service/<int:id>/delete', methods=['POST'])
+@auth_reqd
+def delete_service_post(id):
+    service = Service.query.get(id)
+    if not service:
+        flash('Service does not exist')
+        return redirect(url_for('admin_db'))
+    category_id = service.category.id
+    db.session.delete(service)
+    db.session.commit()
+    flash('Service deleted successfully')
+    return redirect(url_for('show_category', id=category_id))
+
+
+
+
+
+
+
+@app.route('/view_user2')
+@auth_reqd
+def view_cust():
+    return render_template('cust.html')
+
+@app.route('/view_appointments')
+def view_appointments():
+    return render_template('appointments.html')
+
+@app.route('/view_prof')
+@auth_reqd
+def view_prof():
+    return render_template('prof.html')
+@app.route('/add_prof')
+@auth_reqd
+def add_prof():
+    return render_template('professional/add_prof.html')
+
+@app.route('/flag_prof')
+@auth_reqd
+def flag_prof():
+    return render_template('professional/flag_prof.html')
          
 
         

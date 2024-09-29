@@ -69,12 +69,21 @@ class Admin(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='admin', lazy=True)
 
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32),unique=True)
+    #description = db.Column(db.String(256), nullable=True)
+
+    services = db.relationship("Service", backref="category", lazy=True, cascade="all, delete-orphan")
+
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"),nullable=False)
     name = db.Column(db.String(80), unique=True)
     type = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(80), nullable=False)
     price = db.Column(db.String(80), nullable=False)
+    
 
 class Request(db.Model):
     id = db.Column(db.Integer, primary_key=True)
