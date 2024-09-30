@@ -79,10 +79,10 @@ class Category(db.Model):
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"),nullable=False)
-    name = db.Column(db.String(80), unique=True)
-    type = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(80), nullable=False)
-    price = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(64), unique=True)
+    type = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(1024), nullable=False)
+    price = db.Column(db.String(64), nullable=False)
     
 
 class Request(db.Model):
