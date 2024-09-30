@@ -27,13 +27,13 @@
             <th>Service Name</th>
             <th>Service Type</th>
             <th>Description</th>
-            <th>Price</th>
+            <th>Price,(treat it as base price)</th>
             
             
         </tr>
     </thead>
     <tbody>
-       {% for Services in category.services %}
+       {% for service in category.services %}
        <tr>
             <td>{{category.id}}</td>
             <td>{{service.name}}</td>
@@ -47,7 +47,7 @@
                 <i class="fas fa-edit"></i>
                 Edit
             </a>
-            <a href="{{url_for('delete_service', id=product.id)}}" class="btn btn-danger">
+            <a href="{{url_for('delete_service', id=service.id)}}" class="btn btn-danger">
                 <i class="fas fa-trash"></i>
                 Delete
             </a>

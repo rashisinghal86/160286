@@ -449,6 +449,7 @@ def add_service_post():
     price = request.form.get('price')
     
     category = Category.query.get(category_id)
+
     if not category:
         flash('Category does not exist')
         return redirect(url_for('admin_db'))
@@ -472,7 +473,7 @@ def add_service_post():
     service = Service(name=name, price=price, category=category, type=type, description=description)
     db.session.add(service)
     db.session.commit()
-    flash("Category added successfully")
+    flash("Service added successfully")
     return redirect(url_for('show_category', id=category_id))
 
 
@@ -488,44 +489,45 @@ def edit_service(id):
 @admin_reqd
 def edit_service_post(id):
     name = request.form.get('name')
-    price = request.form.get('price')
     category_id = request.form.get('category_id')
-    quantity = request.form.get('quantity')
-    man_date = request.form.get('man_date')
+    type = request.form.get('type')
+    description = request.form.get('description')
+    price = request.form.get('price')
     
     category = Category.query.get(category_id)
     if not category:
         flash('Category does not exist')
         return redirect(url_for('admin_db'))
-    if not name or not price or not quantity or not man_date:
+    if not name or not price or not type or not description:
         flash('Please fill out the fields')
         return redirect(url_for('add_service', category_id=category_id))
     
     try:
-        quantity=int(quantity)
         price=float(price)
-        man_date=datetime.strptime(man_date, '%Y-%m-%d')
+        
     except ValueError:
         flash('Invalid quantity or price')
         return redirect(url_for('add_service', category_id=category_id))
     
-    if quantity <= 0 or price <= 0:
+    if price <= 0:
         flash('Quantity or price cannot be negative')
-        return redirect(url_for('add_service', category_id=category_id))
-    
-    if man_date > datetime.now():
-        flash('Manufacture date cannot be in the future')
         return redirect(url_for('add_service', category_id=category_id))
 
     service=Service.query.get(id)
-    service.name=name  
-    service.price=price
+    service.name=name
     service.category=category
-    service.quantity=quantity
-    service.man_date=man_date
+    service.type=type
+    service.description=description
+    service.price=price
+    
+    
     db.session.commit()
-    flash("Category edited successfully")
+    flash("Service edited successfully")
     return redirect(url_for('show_category', id=category_id))
+
+
+    
+
 
 
 @app.route('/service/<int:id>/delete')
