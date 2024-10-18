@@ -1,6 +1,73 @@
 {% extends 'layout.html' %}
+this is user dashboard page
+{% block content %}
+    {% include 'searchbar.html' with context %}
+    <hr>
+    <div class="categories-list">
+      {% for category in categories %}
+        <h2>{{category.name}}</h2>
+        <div class="services">
+            {% for service in category.services %}
+            {% if sname != '' and sname.lower() in service.name.lower() or not sname %}
+              {% if price and service.price <= price  or not price %} 
+            
 
-<h5>
-    Services app blind redirection
+                <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="https://picsum.photos/200/200" alt="{{service.name}}">
+                <div class="card-body">
+                  <h5 class="card-title">{{service.name}}</h5>
+                  <p class="card-text">
+                    <div class="price">
+                      <strong>Price:</strong>
+                      &#8377; {{service.price}}
+                    </div>
+                  
+                    
+                    <div class="location">
+                      <strong>Location:</strong>
+                      {{service.name}}
+                    </div>
+                  </p>
+                  
+                  
+                 
 
-</h5>
+                    <div class="quantity-input">
+                      <form action="#"
+                      method ="POST" 
+                      class="form">
+                        <input type="submit" value="Add to Cart/Apply" class="btn btn-success">
+                    </form>
+                  </div>
+                  
+                </div>
+                </div>
+              {% endif %}
+            {% endif %}
+            {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block style %}
+<style>
+  .categories-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+  .services {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+  }
+  .card {
+      margin: 10px;
+   
+  }
+
+</style>   
+{% endblock %}

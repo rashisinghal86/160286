@@ -1,4 +1,26 @@
+{% extends 'layout.html' %}
 
+{% block title %}
+    Profile Page
+    
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">
+        hello
+        <span class="text-muted">@{{user.username}}</span>
+    </h1>
+    <div class="profile-pic">
+        <img src="https://api.dicebear.com/9.x/lorelei/svg?seed={{user.username}}" width="100" alt="">
+    </div>
+    <a href="{{url_for('signout')}}" class="btn btn-outline-danger">Signout</a>
+    <a href="{{url_for('applybook')}} " class="btn btn-outline-primary">Apply for services</a>
+    
+    {# form to create password or username #}
+    <! -- update profile functionality -- >
+       
+    <! -- form to create password or username -- >
+    <form action="" method="post" class="form">
                 <div class="card mt-4">
                     <div class="card-header">
                         {{ professional.username }}'s Profile Details
@@ -32,3 +54,4 @@
                 </div>
                 <a href="{{url_for('signout')}}" class="btn btn-outline-danger mt-4">Signout</a>
             </div>
+        {% endblock %}

@@ -83,6 +83,7 @@ class Service(db.Model):
     type = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(1024), nullable=False)
     price = db.Column(db.String(64), nullable=False)
+    #add location/pincode
     
 
 class Request(db.Model):

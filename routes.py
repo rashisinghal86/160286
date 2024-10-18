@@ -553,6 +553,44 @@ def delete_service_post(id):
     flash('Service deleted successfully')
     return redirect(url_for('show_category', id=category_id))
 
+#-----------------professional pages-----------------------------------
+@app.route('/applybook')
+def applybook():
+    categories=Category.query.all()
+    category_names = [category.name for category in categories]
+    category_sizes = [len(category.services) for category in categories]
+
+    return render_template('applybook.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
+
+@app.route('/index')
+@auth_reqd
+def index():
+    #user_id in session/ if user id exists in session we will allow them to see index.html
+    #no checking needed now, bcoz we used decorator: auth reqd
+    #if user is an admin he goes to admin page else user page>> get user
+    user=User.query.get(session['user_id'])
+    if user.is_admin:
+        return redirect(url_for('admin'))
+    
+    categories=Category.query.all()
+
+    cname = request.args.get('cname') or ''
+    sname = request.args.get('sname') or ''
+    price = request.args.get('price')
+
+    if price:
+        try:
+            price = float(price)
+        except ValueError:
+            flash('Invalid price')
+            return redirect(url_for('index'))
+        if price <= 0:
+            flash('Price cannot be negative')
+            return redirect(url_for('index'))
+
+    if cname:
+        categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
+    return render_template('index.html', categories=categories, cname=cname, sname=sname, price=price) 
 
 
 

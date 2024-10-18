@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+{% block title %}
+Apply for services
+{% endblock %}
+{% block content %}
+<h1 class="display">Apply</h1>
+
+<h2 class="display-2">Categories</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Category Name</th>
+            <th>No of Services</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in categories %}
+        <tr>
+            <td>{{category.name}}</td>
+            <td>{{category.services|length}}</td>
+            
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in category.services %}
+                        <tr>
+                            <td>{{ service.name }}</td>
+                            <td>{{ service.type }}</td>
+                            <td>{{ service.description }}</td>
+                            <td>{{ service.price }}</td>
+                            <td>
+                                <a href="#" class="btn btn-outline-primary">Apply/Book</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+```same page with difference to apply for services or book for services, 
+apply will send notification to the admin to approve and book will send notification to the professional and the user who booked the service.```
