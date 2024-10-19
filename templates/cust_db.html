@@ -1,2 +1,25 @@
 page for already registered customer
 {% extends 'layout.html' %}
+
+{% block content %}
+    
+<h1>show me listed services to book for</h1>
+
+    <a href="#" class="btn btn-outline-danger">book</a>
+    <h5>go to applybook.html</h5>
+    <hr>
+
+    
+    <a href="#" class="btn btn-outline-danger">show/update profile</a>
+    <hr>
+    <a href="#" class="btn btn-outline-danger">bookings</a>
+    <h5>list of booking date, time, service</h5>
+    <hr>
+
+    <a href="#">Back</a>
+
+    <hr>
+    <a href="{{url_for('index')}}">Index</a>
+
+
+{% endblock %}

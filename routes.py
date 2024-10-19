@@ -562,6 +562,8 @@ def applybook():
 
     return render_template('applybook.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
 
+# -----------user-pages-----------------------------------
+
 @app.route('/index')
 @auth_reqd
 def index():
@@ -592,7 +594,15 @@ def index():
         categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
     return render_template('index.html', categories=categories, cname=cname, sname=sname, price=price) 
 
-
+@app.route('/apply/<int:service_id>', methods=['POST'])
+@auth_reqd
+def apply(service_id):
+    service = Service.query.get(service_id)
+    if not service:
+        flash('Service does not exist')
+        return redirect(url_for('index'))
+    user = User.query.get(session['user_id'])
+    
 
 
 

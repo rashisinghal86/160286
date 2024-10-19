@@ -84,6 +84,11 @@ class Service(db.Model):
     description = db.Column(db.String(1024), nullable=False)
     price = db.Column(db.String(64), nullable=False)
     #add location/pincode
+    #location = db.Column(db.String(80), nullable=False)
+    #duration = db.Column(db.String(80), nullable=False)
+    #add date
+    #add time
+    #add duration
     
 
 class Request(db.Model):
@@ -92,6 +97,9 @@ class Request(db.Model):
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     location = db.Column(db.String(80), nullable=False)
+    #date = db.Column(db.Date, nullable=False)
+    #time = db.Column(db.Time, nullable=False)
+    
     
     
     is_accepted = db.Column(db.Boolean, default=False)
