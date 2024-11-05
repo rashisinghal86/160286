@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block title %}
+Professionals Management#
+{% endblock %}
+{% block content %}
+<h1 class="display">Professionals Management</h1>
+
+<div class="heading">
+    <div class="container mt-5">
+        <h2>Pending Professionals</h2>
+        <ul class="list-group">
+            {% for professional in pending_professionals %}
+            <li class="list-group-item">
+                {{ professional.name }} - {{ professional.email }}
+                <form action="{{ url_for('approve_professional', id=professional.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        <h2>Approved Professionals</h2>
+        <ul class="list-group">
+            {% for professional in approved_professionals %}
+            <li class="list-group-item">
+                {{ professional.name }} - {{ professional.email }}
+            </li>
+            <form action="{{ url_for('block_professional', id=professional.id) }}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-success btn-sm">Block</button>
+            </form>
+            {% endfor %}
+        </ul>
+        <h2>Blocked Professionals</h2>
+        <ul class="list-group">
+            {% for professional in blocked_professionals %}
+            <li class="list-group-item">
+                {{ professional.name }} - {{ professional.email }}
+            </li>
+            <form action="{{ url_for('unblock_professional', id=professional.id) }}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-success btn-sm">Unblock</button>
+            </form>
+            {% endfor %}
+
+        
+        
+
+    </div>
+</body>
+</html>
+{% endblock %}

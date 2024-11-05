@@ -212,18 +212,100 @@ def register_pdb_post():
     experience = request.form['experience']
     
     
+    
     #password    = request.form['password']
     if not email or not name or not contact or not service_type or not experience:
         flash('Please enter all the fields')
         return redirect(url_for('register_pdb'))
     
-    new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience)
+    new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience)   
     db.session.add(new_professional)
     db.session.commit()
     
     #Check if professional-specific details are already provided\    
     flash('professional registered successfully')
     return redirect(url_for('prof_db'))
+
+@app.route('/admin/pending_professionals')
+def pending_professionals():
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You do not have permission to access this page')
+        return redirect(url_for('login'))
+    
+    pending_professionals = Professional.query.filter_by(is_verified=False,is_flagged=False).all()
+    approved_professionals = Professional.query.filter_by(is_verified=True).all()
+    blocked_professionals = Professional.query.filter_by(is_flagged=True).all()
+    
+    return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals)
+
+# Admin route to approve professional
+@app.route('/admin/approve_professional/<int:id>', methods=['POST'])
+def approve_professional(id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You have permission to access this page')
+        return redirect(url_for('login'))
+    
+    
+    professional = Professional.query.get(id)
+    if professional:
+        professional.is_verified = True
+        #professional.is_flagged = True
+        db.session.commit()
+        flash(f'Professional {professional.name} approved successfully')
+    return redirect(url_for('pending_professionals'))
+
+# Admin route to block professional
+@app.route('/admin/block_professional/<int:id>', methods=['POST'])
+def block_professional(id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You have permission to access this page')
+        return redirect(url_for('login'))
+    
+    professional = Professional.query.get(id)
+    if professional:
+        professional.is_flagged = True
+       
+        professional.is_verified = False
+        db.session.commit()
+        flash(f'Professional {professional.name} blocked successfully')
+    return redirect(url_for('pending_professionals'))
+
+# Admin route to unblock professional
+@app.route('/admin/unblock_professional/<int:id>', methods=['POST'])
+def unblock_professional(id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You have permission to access this page')
+        return redirect(url_for('login'))
+    
+    professional = Professional.query.get(id)
+    if professional:
+        professional.is_flagged = False
+        db.session.commit()
+        flash(f'Professional {professional.name} unblocked successfully')
+    return redirect(url_for('pending_professionals'))
+
+
+
 
 #---2b customer registration-----------------------------------
 
@@ -625,10 +707,10 @@ def view_prof():
 def add_prof():
     return render_template('professional/add_prof.html')
 
-@app.route('/flag_prof')
-@auth_reqd
-def flag_prof():
-    return render_template('professional/flag_prof.html')
+#@app.route('/flag_prof')
+##@auth_reqd
+#def flag_prof():
+#    return render_template('professional/flag_prof.html')
          
 
         

@@ -32,14 +32,18 @@ Update your profile before you can view your appointments
         <label for="experience" class="form-label">Experience</label>
         <input type="number" name="experience" required class="form-control">
     </div>
+    <div class="form-group">
+        <input type="hidden" name="is_verified" value="False">
+   
+        <input type="hidden" name="is_flagged" value="False">
+
+        <input type="hidden" name="is_suspend" value="False">
+    </div>
+
     
     <br>
     <div class="form-group">
-        <div class="form-group">
-            <p>
-                <button type="submit" class="btn btn-primary">Profile Upload</button>
-            </p>
-        </div>
+        
         <div>
             
             <form method=post enctype=multipart/form-data>
@@ -47,7 +51,11 @@ Update your profile before you can view your appointments
                 <input type=submit value=Upload>
               </form>
         </div>
-        
+        <div class="form-group">
+            <p>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </p>
+        </div>
     </div>
     
   
