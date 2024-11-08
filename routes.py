@@ -248,6 +248,28 @@ def register_pdb_post():
     flash('professional registered successfully')
     return redirect(url_for('prof_db'))
 
+@app.route('/admin/professionals')
+def professionals():
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You do not have permission to access this page')
+        return redirect(url_for('login'))
+        
+    professionals=Professional.query.all()
+    pname = request.args.get('pname') or ''
+    pservice_type = request.args.get('pservice_type') or ''
+    plocation = request.args.get('plocation') or ''
+    print(pname, pservice_type, plocation)
+
+    if pname:
+        professionals = Professional.query.filter(Professional.name.ilike(f'%{pname}%')).all()
+    return render_template('professionals.html', professionals=professionals, pname=pname, pservice_type=pservice_type, plocation=plocation)
+
+
 @app.route('/admin/pending_professionals')
 def pending_professionals():
     if 'user_id' not in session:
@@ -264,22 +286,21 @@ def pending_professionals():
     blocked_professionals = Professional.query.filter_by(is_flagged=True).all()
 
     #search professionals for search on basis of name, service_type, location, experience
-    professionals=Professional.query.all()
-    pname = request.args.get('pname') or ''
-    pservice_type = request.args.get('pservice_type') or ''
-    plocation = request.args.get('plocation') or ''
-    print(pname, pservice_type, plocation)
-    # search_professionals = []
+    # professionals=Professional.query.all()
+    # pname = request.args.get('pname') or ''
+    # pservice_type = request.args.get('pservice_type') or ''
+    # plocation = request.args.get('plocation') or ''
+    # print(pname, pservice_type, plocation)
+
+    # # search_professionals = []
 
     # if pname:
-
-    #     search_professionals = Professional.query.filter(Professional.name.ilike(f'%{pname}%')).all()
-
+    #     professionals = Professional.query.filter(Professional.name.ilike(f'%{pname}%')).all()
     # # if pservice_type:
-    #     search_professionals = Professional.query.filter(Professional.service_type.ilike(f'%{pservice_type}%')).all()
+    #     professionals = Professional.query.filter(Professional.service_type.ilike(f'%{pservice_type}%')).all()
     # if plocation:
-    #     search_professionals = Professional.query.filter(Professional.location.ilike(f'%{plocation}%')).all()  
-    return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals, professionals=professionals, pname=pname, pservice_type=pservice_type, plocation=plocation, sp=search_professionals)
+    #     professionals = Professional.query.filter(Professional.location.ilike(f'%{plocation}%')).all()  
+    return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals)
         
     #return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals)
 

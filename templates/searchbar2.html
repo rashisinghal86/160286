@@ -12,21 +12,23 @@
                     placeholder="Name">
 
                     <input type="text"
-                    name="pservice_type"
-                    id="pservice_type"
-                    value="{{pservice_type}}"
-                    class="form-control"
-                    placeholder="Service">
-                    
-                    <input type="text"
                     name="plocation"
                     id="plocation"
                     value="{{plocation}}"
                     class="form-control"
                     placeholder="Location">
 
+
+                    <input type="text"
+                    name="pservice_type"
+                    id="pservice_type"
+                    value="{{pservice_type}}"
+                    class="form-control"
+                    placeholder="Service">
                     
-                    <a href="{{url_for('pending_professionals')}}" class="btn btn-outline-success">
+                    
+                    
+                    <a href="{{url_for('professionals')}}" class="btn btn-outline-success">
                         <i class="fa fa-refresh"></i>
                         Refresh
                     </a>
@@ -36,7 +38,7 @@
                         <i class="fa fa-search"></i>
                         Search
 
-                    >
+                    
                 </div>
                 
             </form>
