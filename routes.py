@@ -3,7 +3,19 @@ from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Role,Admin, Professional, Customer, Category, Service
 from functools import wraps
+import os
+from werkzeug.utils import secure_filename
 
+
+UPLOAD_FOLDER = 'static/uploads'
+
+ALLOWED_EXTENSIONS = {'txt', 'pdf'}
+
+#app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
 #-------decorator for authentication----------------    
 #decorator for auth_required
 def auth_reqd(func):
@@ -210,19 +222,29 @@ def register_pdb_post():
     contact = request.form['contact']
     service_type = request.form['service_type']
     experience = request.form['experience']
+    location = request.form['location']
     
-    
-    
-    #password    = request.form['password']
+    #file upload 
+    if 'file' in request.files:
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            flash('File uploaded successfully!')
+
+   #password    = request.form['password']
     if not email or not name or not contact or not service_type or not experience:
         flash('Please enter all the fields')
         return redirect(url_for('register_pdb'))
     
-    new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience)   
+    new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience, location=location, filename=filename)   
     db.session.add(new_professional)
     db.session.commit()
     
-    #Check if professional-specific details are already provided\    
+    #Check if professional-specific details are already provided  
     flash('professional registered successfully')
     return redirect(url_for('prof_db'))
 
@@ -240,8 +262,26 @@ def pending_professionals():
     pending_professionals = Professional.query.filter_by(is_verified=False,is_flagged=False).all()
     approved_professionals = Professional.query.filter_by(is_verified=True).all()
     blocked_professionals = Professional.query.filter_by(is_flagged=True).all()
-    
-    return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals)
+
+    #search professionals for search on basis of name, service_type, location, experience
+    professionals=Professional.query.all()
+    pname = request.args.get('pname') or ''
+    pservice_type = request.args.get('pservice_type') or ''
+    plocation = request.args.get('plocation') or ''
+    print(pname, pservice_type, plocation)
+    # search_professionals = []
+
+    # if pname:
+
+    #     search_professionals = Professional.query.filter(Professional.name.ilike(f'%{pname}%')).all()
+
+    # # if pservice_type:
+    #     search_professionals = Professional.query.filter(Professional.service_type.ilike(f'%{pservice_type}%')).all()
+    # if plocation:
+    #     search_professionals = Professional.query.filter(Professional.location.ilike(f'%{plocation}%')).all()  
+    return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals, professionals=professionals, pname=pname, pservice_type=pservice_type, plocation=plocation, sp=search_professionals)
+        
+    #return render_template('pending_professionals.html', pending_professionals=pending_professionals,approved_professionals=approved_professionals, blocked_professionals=blocked_professionals)
 
 # Admin route to approve professional
 @app.route('/admin/approve_professional/<int:id>', methods=['POST'])
@@ -713,7 +753,8 @@ def add_prof():
 #    return render_template('professional/flag_prof.html')
          
 
-        
+
+   
     
     
 

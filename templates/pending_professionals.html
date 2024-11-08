@@ -3,7 +3,23 @@
 Professionals Management#
 {% endblock %}
 {% block content %}
+{% include 'searchbar2.html' with context %}
 <h1 class="display">Professionals Management</h1>
+<a href="{{url_for('admin_db')}}" class="btn btn-primary">
+    <i class="fa fa-angle-left"></i>
+    back</a>
+
+<hr>
+<!-- {%if pname%}
+{%for s in sp %}
+<li>
+    {{s.name}} | {{s.email}} | {{s.location}}
+</li>
+{%endfor%}
+{%endif%} -->
+
+
+
 
 <div class="heading">
     <div class="container mt-5">
@@ -11,7 +27,10 @@ Professionals Management#
         <ul class="list-group">
             {% for professional in pending_professionals %}
             <li class="list-group-item">
-                {{ professional.name }} - {{ professional.email }}
+                {{ professional.name }} | {{ professional.email }} | | {{ professional.location }}
+                <a href="{{ url_for('static', filename='uploads/' ~ professional.filename) }}" target="_blank">View Uploaded Document</a><br>
+                <!-- <iframe src="{{ url_for('static', filename='uploads/' ~ professional.filename) }}" width="100%" height="600px">    </iframe> -->
+    
                 <form action="{{ url_for('approve_professional', id=professional.id) }}" method="post" style="display:inline;">
                     <button type="submit" class="btn btn-success btn-sm">Approve</button>
                 </form>
@@ -39,6 +58,9 @@ Professionals Management#
                 <button type="submit" class="btn btn-success btn-sm">Unblock</button>
             </form>
             {% endfor %}
+        </ul>
+        
+
 
         
         

@@ -1,0 +1,47 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <form action="" method="GET">
+                <div class="input-group">
+                    <input type="text" 
+                    name="pname"
+                    id="pname"
+                    value="{{pname}}"
+                    class="form-control"
+                    placeholder="Name">
+
+                    <input type="text"
+                    name="pservice_type"
+                    id="pservice_type"
+                    value="{{pservice_type}}"
+                    class="form-control"
+                    placeholder="Service">
+                    
+                    <input type="text"
+                    name="plocation"
+                    id="plocation"
+                    value="{{plocation}}"
+                    class="form-control"
+                    placeholder="Location">
+
+                    
+                    <a href="{{url_for('pending_professionals')}}" class="btn btn-outline-success">
+                        <i class="fa fa-refresh"></i>
+                        Refresh
+                    </a>
+                    
+
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fa fa-search"></i>
+                        Search
+
+                    >
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+ 

@@ -9,8 +9,7 @@
 
 Update your profile before you can view your appointments
 
-<form action="{{url_for('register_pdb')}}" class="form" method="POST">
-    
+<form action="{{url_for('register_pdb')}}" class="form" method="POST" enctype="multipart/form-data">    
     <div class="form-group">
         <label for="email" class="form-label">Email</label>
         <input type="email" name="email" required class="form-control">
@@ -33,6 +32,10 @@ Update your profile before you can view your appointments
         <input type="number" name="experience" required class="form-control">
     </div>
     <div class="form-group">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" name="location" required class="form-control">
+    </div>
+    <div class="form-group">
         <input type="hidden" name="is_verified" value="False">
    
         <input type="hidden" name="is_flagged" value="False">
@@ -46,9 +49,9 @@ Update your profile before you can view your appointments
         
         <div>
             
-            <form method=post enctype=multipart/form-data>
-                <input type=file name=file>
-                <input type=submit value=Upload>
+                <input type=file name=file required>
+                <input type=submit value=Submit>
+
               </form>
         </div>
         <div class="form-group">

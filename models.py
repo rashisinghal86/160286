@@ -39,11 +39,13 @@ class Professional(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     email  = db.Column(db.String(80), nullable=False)
     name = db.Column(db.String(80), nullable=False)
-    #username = db.Column(db.String(80), unique=True, nullable=False)
+    filename = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     service_type = db.Column(db.String(80), nullable=False)
     #expertise = db.Column(db.String(80), nullable=False)
     experience = db.Column(db.String(80), nullable=True)
+    location = db.Column(db.String(80), nullable=False)
+    
     
     is_verified = db.Column(db.Boolean, default=False)
     is_flagged = db.Column(db.Boolean, default=False)
