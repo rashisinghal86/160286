@@ -724,6 +724,7 @@ def index():
     cname = request.args.get('cname') or ''
     sname = request.args.get('sname') or ''
     price = request.args.get('price')
+    location = request.args.get('location') or ''
 
     if price:
         try:
@@ -737,7 +738,7 @@ def index():
 
     if cname:
         categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
-    return render_template('index.html', categories=categories, cname=cname, sname=sname, price=price) 
+    return render_template('index.html', categories=categories, cname=cname, sname=sname, price=price, location=location) 
 
 @app.route('/apply/<int:service_id>', methods=['POST'])
 @auth_reqd
