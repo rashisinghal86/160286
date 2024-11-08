@@ -590,13 +590,15 @@ def add_service_post():
     type = request.form.get('type')
     description = request.form.get('description')
     price = request.form.get('price')
+    location = request.form.get('location')
+    duration = request.form.get('duration')
     
     category = Category.query.get(category_id)
 
     if not category:
         flash('Category does not exist')
         return redirect(url_for('admin_db'))
-    if not name or not price or not type or not description:
+    if not name or not price or not type or not description or not location or not duration:
         flash('Please fill out the fields')
         return redirect(url_for('add_service', category_id=category_id))
     
@@ -613,7 +615,7 @@ def add_service_post():
         return redirect(url_for('add_service', category_id=category_id))
     
     
-    service = Service(name=name, price=price, category=category, type=type, description=description)
+    service = Service(name=name, price=price, category=category, type=type, description=description, location=location, duration=duration)
     db.session.add(service)
     db.session.commit()
     flash("Service added successfully")

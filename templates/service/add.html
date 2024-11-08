@@ -42,7 +42,25 @@
         required>
     </div>
     <div class="form-group">
-        <label for="category_id" class="form-label">Service Type</label>
+        <label for="location" class="form-label">Service Location:</label>
+        <input type="text"
+        name="location"
+        id="location"
+        class="form-control"
+        required>
+    <div class="form-group">
+        <label for="duration" class="form-label">Service Duration:</label>
+        <input type="number"
+        name="duration"
+        id="duration"
+        min="1"
+        value="1"
+        class="form-control"
+        required>
+    </div>
+
+    <div class="form-group">
+        <label for="category_id" class="form-label">Category</label>
         <select name="category_id" id="category_id" class="form-control" required>
             {% for cat in categories %}
             {% if cat.id == category.id %}

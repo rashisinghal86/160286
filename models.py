@@ -86,8 +86,8 @@ class Service(db.Model):
     description = db.Column(db.String(1024), nullable=False)
     price = db.Column(db.String(64), nullable=False)
     #add location/pincode
-    #location = db.Column(db.String(80), nullable=False)
-    #duration = db.Column(db.String(80), nullable=False)
+    location = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.String(80), nullable=False)
     #add date
     #add time
     #add duration
