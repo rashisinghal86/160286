@@ -770,11 +770,14 @@ def view_prof():
 @auth_reqd
 def add_prof():
     return render_template('professional/add_prof.html')
+# booking route
 
-#@app.route('/flag_prof')
-##@auth_reqd
-#def flag_prof():
-#    return render_template('professional/flag_prof.html')
+# @app.route('/request')
+# @auth_reqd
+# def request():
+#     requests = Request.query.filter_by(user_id=session['user_id']).all()
+#     # total = sum([request.product.price * request.quantity for request in requests])
+#     return render_template('request.html', requests=requests)
          
 
 

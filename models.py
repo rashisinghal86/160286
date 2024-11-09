@@ -42,7 +42,6 @@ class Professional(db.Model):
     filename = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     service_type = db.Column(db.String(80), nullable=False)
-    #expertise = db.Column(db.String(80), nullable=False)
     experience = db.Column(db.String(80), nullable=True)
     location = db.Column(db.String(80), nullable=False)
     
@@ -87,29 +86,36 @@ class Service(db.Model):
     price = db.Column(db.String(64), nullable=False)
     #add location/pincode
     location = db.Column(db.String(80), nullable=False)
-    duration = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.Integer, nullable=False)
+    #time_reqd
+
+    
     #add date
     #add time
     #add duration
     
 
-class Request(db.Model):
+class Booking(db.Model):#change to Request
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     location = db.Column(db.String(80), nullable=False)
-    #date = db.Column(db.Date, nullable=False)
-    #time = db.Column(db.Time, nullable=False)
-    
-    
+    date_of_booking = db.Column(db.Date, nullable=False)
+    date_of_completion = db.Column(db.Date, nullable=False)
+    #status = db.Column(db.String(80), nullable=False)
+    rating = db.Column(db.Integer, nullable=True)
+    remarks = db.Column(db.String(1024), nullable=True) 
     
     is_accepted = db.Column(db.Boolean, default=False)
-    is_completed = db.Column(db.Boolean, default=False)
+    is_pending = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=False)
     is_canceled = db.Column(db.Boolean, default=False)
-    is_flagged = db.Column(db.Boolean, default=False)
+    is_completed = db.Column(db.Boolean, default=False)
+    
+    
 
-service_requests = db.relationship('Service', backref='request', lazy=True)
+service_requests = db.relationship('Service', backref='booking', lazy=True)
     
     
 
