@@ -98,7 +98,7 @@ class Service(db.Model):
 class Booking(db.Model):#change to Request
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=False)
+    professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     location = db.Column(db.String(80), nullable=False)
     date_of_booking = db.Column(db.Date, nullable=False)
@@ -115,7 +115,7 @@ class Booking(db.Model):#change to Request
     
     
 
-service_requests = db.relationship('Service', backref='booking', lazy=True)
+    service_requests = db.relationship('Service', backref='booking', lazy=True)
     
     
 

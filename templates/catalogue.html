@@ -26,10 +26,13 @@
                         <strong>Location:</strong>
                         {{ service.location }}
                       </div>
+                      <div>
+                        
                     </p>
+
                     <div class="quantity-input">
-                      <form action="#" method="POST" class="form">
-                        <input type="submit" value="Add to Cart/Apply" class="btn btn-success">
+                    <form action="{{ url_for('add_to_booking', service_id=service.id) }}" method ="POST" class="form">
+                      <input type="submit" value="Book" class="btn btn-success">
                       </form>
                     </div>
                   </div>

@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+{% block title %}
+Customers Management#
+{% endblock %}
+{% block content %}
+
+<h1 class="display">Customers Management</h1>
+<h2>add review button for proff</h2>
+<a href="{{url_for('admin_db')}}" class="btn btn-primary">
+    <i class="fa fa-angle-left"></i>
+    back</a>
+    <a href="{{url_for('customers')}}" class="btn btn-outline-primary">
+        <i class="fa fa-search"></i>
+       Search Customers
+    </a>
+    
+    <!-- add total in fron of each heading while doing css -->
+<hr>
+</div>
+
+        <div class="container mt-5">
+            <h2>Unblocked Customers</h2>
+            <h6>total unblocked customers = {{unblocked_customers|length}}</h6>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in unblocked_customers %}
+                    <tr>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.location }}</td>
+                        <td>
+                            
+                            <form action="{{ url_for('block_customer', id=customer.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="container mt-5">
+            <h2>Blocked Customers</h2>
+            <h6>total Blocked customers = {{blocked_customers|length}}</h6>
+            
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in blocked_customers %}
+                    <tr>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.location }}</td>
+                        
+                        <td>
+                            <form action="{{ url_for('unblock_customer', id=customer.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-warning btn-sm">Unblock</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>     
+    </div>
+</body>
+</html>
+{% endblock %}

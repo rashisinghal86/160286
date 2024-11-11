@@ -1,7 +1,8 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Role,Admin, Professional, Customer, Category, Service
+from models import db, User, Role,Admin, Professional, Customer, Category, Service, Booking
+from datetime import datetime
 from functools import wraps
 import os
 from werkzeug.utils import secure_filename
@@ -368,6 +369,8 @@ def unblock_professional(id):
 
 
 
+
+
 #---2b customer registration-----------------------------------
 
 @app.route('/register_cdb')
@@ -403,10 +406,82 @@ def register_cdb_post():
     flash('Customer registered successfully')
     return redirect(url_for('cust_db'))
 
-#@app.route('/admin_db')
-#def admin_db():
- #    return render_template('admin_db.html')
-     
+#Admin route to search customers and blocked/unblocked.
+@app.route('/admin/customers')
+def customers():
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You do not have permission to access this page')
+        return redirect(url_for('login'))
+        
+    customers=Customer.query.all()
+    cname = request.args.get('cname') or ''
+    clocation = request.args.get('clocation') or ''
+    print(cname, clocation)
+
+    if cname:
+        customers = Customer.query.filter(Customer.name.ilike(f'%{cname}%')).all()
+    return render_template('customers.html', customers=customers, cname=cname, clocation=clocation)
+
+#admin route to manage customers
+@app.route('/admin/manage_customers')
+def manage_customers():
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You do not have permission to access this page')
+        return redirect(url_for('login'))
+    
+    unblocked_customers = Customer.query.filter_by(is_blocked=False).all()
+    blocked_customers = Customer.query.filter_by(is_blocked=True).all()
+
+    return render_template('manage_customers.html',unblocked_customers=unblocked_customers, blocked_customers=blocked_customers)
+        
+# Admin route to block customer
+@app.route('/admin/block_customer/<int:id>', methods=['POST'])
+def block_customer(id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You have permission to access this page')
+        return redirect(url_for('login'))
+    
+    customer = Customer.query.get(id)
+    if customer:
+        customer.is_blocked = True
+       
+        db.session.commit()
+        flash(f'Customer {customer.name} blocked successfully')
+    return redirect(url_for('manage_customers'))
+
+# Admin route to unblock customer
+@app.route('/admin/unblock_customer/<int:id>', methods=['POST'])
+def unblock_customer(id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You have permission to access this page')
+        return redirect(url_for('login'))
+    
+    customer = Customer.query.get(id)
+    if customer:
+        customer.is_blocked = False
+        db.session.commit()
+        flash(f'Customer {customer.name} unblocked successfully')
+    return redirect(url_for('manage_customers'))     
 
 @app.route('/prof_db')
 def prof_db():
@@ -479,11 +554,6 @@ def profile_post():
         return redirect(url_for('profile'))
 
 #-------admin pages-----------------------------------
-
-
-
-
-
 @app.route('/admin_db')
 @admin_reqd
 def admin_db():
@@ -492,7 +562,7 @@ def admin_db():
     category_sizes = [len(category.services) for category in categories]
 
     return render_template('admin_db.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
-#-----------------category pages-----------------------------------
+#----------------Add category pages-----------------------------------
 
 @app.route('/category/add')
 @admin_reqd
@@ -570,7 +640,7 @@ def delete_category_post(id):
     flash('Category deleted successfully')
     return redirect(url_for('admin_db'))
 
-#----------- services offered-----------------------------------
+#----------- Add services packages in a category-----------------------------------
 @app.route('/service/add/<int:category_id>')
 @admin_reqd
 def add_service(category_id):
@@ -670,11 +740,6 @@ def edit_service_post(id):
     flash("Service edited successfully")
     return redirect(url_for('show_category', id=category_id))
 
-
-    
-
-
-
 @app.route('/service/<int:id>/delete')
 @admin_reqd
 def delete_service(id):
@@ -699,21 +764,21 @@ def delete_service_post(id):
     return redirect(url_for('show_category', id=category_id))
 
 #-----------------professional pages-----------------------------------
-@app.route('/applybook')
-def applybook():
-    categories=Category.query.all()
-    category_names = [category.name for category in categories]
-    category_sizes = [len(category.services) for category in categories]
 
-    return render_template('applybook.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
+# @app.route('/applybook')
+# def applybook():
+#     categories=Category.query.all()
+#     category_names = [category.name for category in categories]
+#     category_sizes = [len(category.services) for category in categories]
+
+#     return render_template('applybook.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
 
 # -----------user-pages-----------------------------------
 
-@app.route('/index')
+@app.route('/catalogue')
 @auth_reqd
-def index():
-    #user_id in session/ if user id exists in session we will allow them to see index.html
-    #no checking needed now, bcoz we used decorator: auth reqd
+def catalogue():
+    #user_id in session/ if user id exists in session we will allow them to see catalogue.html
     #if user is an admin he goes to admin page else user page>> get user
     user=User.query.get(session['user_id'])
     if user.is_admin:
@@ -725,60 +790,64 @@ def index():
     sname = request.args.get('sname') or ''
     price = request.args.get('price')
     location = request.args.get('location') or ''
+   
 
     if price:
         try:
             price = float(price)
         except ValueError:
             flash('Invalid price')
-            return redirect(url_for('index'))
+            return redirect(url_for('catalogue'))
         if price <= 0:
             flash('Price cannot be negative')
-            return redirect(url_for('index'))
+            return redirect(url_for('catalogue'))
 
     if cname:
         categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
-    return render_template('index.html', categories=categories, cname=cname, sname=sname, price=price, location=location) 
+    return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location)
 
-@app.route('/apply/<int:service_id>', methods=['POST'])
+
+ 
+@app.route('/add_to_booking/<int:service_id>', methods=['POST'])
 @auth_reqd
-def apply(service_id):
+def add_to_booking(service_id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
     service = Service.query.get(service_id)
     if not service:
         flash('Service does not exist')
-        return redirect(url_for('index'))
-    user = User.query.get(session['user_id'])
+        return redirect(url_for('catalogue'))
+    
+    # user = User.query.get(session['user_id'])
+    # professional = Professional.query.filter_by(user_id=user.id).first()
+    
+    # if not professional:
+    #     flash('Professional not found for the service')
+    #     return redirect(url_for('catalogue'))
+    
+    booking = Booking.query.filter_by(customer_id=session['user_id'], service_id=service_id).first()
+    if not booking:
+        booking = Booking(
+            customer_id=session['user_id'],
+            # professional_id=professional.id,
+            service_id=service_id,
+            location=service.location,
+            date_of_booking=datetime.now(),
+            date_of_completion=None,
+            is_pending=True,
+            is_completed=False,
+            is_canceled=False,
+            is_accepted=False,
+            is_active=True,
+        )
+        db.session.add(booking)
+    db.session.commit()
+    flash('Booking sent successfully')
+    return render_template('bookings.html', bookings=[booking])
     
 
-
-
-
-@app.route('/view_user2')
-@auth_reqd
-def view_cust():
-    return render_template('cust.html')
-
-@app.route('/view_appointments')
-def view_appointments():
-    return render_template('appointments.html')
-
-@app.route('/view_prof')
-@auth_reqd
-def view_prof():
-    return render_template('prof.html')
-@app.route('/add_prof')
-@auth_reqd
-def add_prof():
-    return render_template('professional/add_prof.html')
-# booking route
-
-# @app.route('/request')
-# @auth_reqd
-# def request():
-#     requests = Request.query.filter_by(user_id=session['user_id']).all()
-#     # total = sum([request.product.price * request.quantity for request in requests])
-#     return render_template('request.html', requests=requests)
-         
 
 
    

@@ -94,3 +94,7 @@
         </div>
     </div>
 {% endblock %}
+
+<!-- <h5>go to applybook.html</h5>
+    <a href="{{url_for('applybook')}}">Applybook,table to book services</a> -->
+

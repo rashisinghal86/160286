@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+<!-- {% extends 'layout.html' %}
 {% block title %}
 Apply for services
 {% endblock %}
@@ -40,7 +40,7 @@ Apply for services
                             <td>{{ service.description }}</td>
                             <td>{{ service.price }}</td>
                             <td>
-                                <a href="#" class="btn btn-outline-primary">Apply/Book</a>
+                                <a href="{{url_for('bookings')}}" class="btn btn-outline-primary">Apply/Book</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -53,4 +53,4 @@ Apply for services
 </table>
 {% endblock %}
 ```same page with difference to apply for services or book for services, 
-apply will send notification to the admin to approve and book will send notification to the professional and the user who booked the service.```
+apply will send notification to the admin to approve and book will send notification to the professional and the user who booked the service.``` -->

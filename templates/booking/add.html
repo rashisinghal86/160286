@@ -1,0 +1,70 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Add Booking
+{% endblock %}
+
+{% block content %}
+<h1 class="display-1">Add Booking</h1>
+<form action="#" method="post" class="form">
+    <div class="form-group">
+       <label for="name" class="form-label">Booking Name:</label>
+       <input type="text" 
+       name="name" 
+       id="name" 
+       class="form-control" 
+       required>
+    </div>
+    <div class="form-group">
+        <label for="location" class="form-label">Booking Address:</label>
+        <input type="text" 
+        name="type" 
+        id="type" 
+        class="form-control"
+        required>
+    </div>
+    <div class="form-group">
+        <label for="duration" class="form-label">Booking Duration:</label>
+        <input type="number"
+        name="duration"
+        id="duration"
+        min="1"
+        value="1"
+        class="form-control"
+        required>
+    </div>
+
+    <div class="form-group">
+        <label for="category_id" class="form-label">Category</label>
+        <select name="category_id" id="category_id" class="form-control" required>
+            {% for cat in categories %}
+            {% if cat.id == category.id %}
+                <option selected value="{{cat.id}}">{{cat.name}}</option>
+            {% else %}
+                <option value="{{cat.id}}">{{cat.name}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+   </div>
+    <div class="form-group">
+         <label for="service_id" class="form-label">Service</label>
+         <select name="service_id" id="service_id" class="form-control" required>
+            {% for service in category.services %}
+            {% if service.id == service.id %}
+                <option selected value="{{service.id}}">{{service.name}}</option>
+            {% else %}
+                <option value="{{service.id}}">{{service.name}}</option>
+            {% endif %}
+            {% endfor %}
+         </select>
+
+   <div class="form_group">
+    <button type="submit" class="btn btn-success">
+        <i class="fa5 fa-plus"></i> 
+        Add
+    </button>
+</div>
+  
+    
+</form>
+{% endblock %}

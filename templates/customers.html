@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% block title %}
+Customers Management
+{% endblock %}
+{% block content %}
+{% include 'searchbar3.html' with context %}
+<h1 class="display">Search Customers</h1>
+<a href="{{url_for('manage_customers')}}" class="btn btn-primary">
+    <i class="fa fa-angle-left"></i>
+    back
+</a>
+<hr>
+<h2>List Of All Customers</h2>
+<div class="customers-list">
+    {% for customer in customers %}
+        {% if 
+            (cname == '' or cname.lower() in customer.name.lower()) and
+            (clocation == '' or clocation.lower() in customer.location.lower())
+        %}
+        
+        <!-- show search result -->
+        
+            <div class="container mt-5">
+           
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.location }}</td>
+                        <td>
+                            <form action="{{ url_for('block_customer', id=customer.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                            </form>
+                            <form action="{{ url_for('unblock_customer', id=customer.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-warning btn-sm">Unblock</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        {% endif %}
+        
+    {% endfor %}
+</div>
+{% endblock %}
