@@ -485,7 +485,37 @@ def unblock_customer(id):
 
 @app.route('/prof_db')
 def prof_db():
-    return render_template('prof_db.html')
+    prof_name = request.args.get('username') or ''
+    #you can use the username to search for the professional in the database and show request accordingly in html according to their location.
+    # check for proff in session, and fetch active request accepted by professional
+    # pass it into render tempalate and show in html page.
+    # [].
+    open_requests = Booking.query.filter_by(is_pending=True).all()
+    accepted_requests = Booking.query.filter_by(is_accepted=True).all()
+    print(open_requests)
+
+    return render_template('prof_db.html', prof_name=prof_name, open_requests=open_requests, accepted_requests=accepted_requests)
+
+@app.route('/prof_db/<int:id>')
+def prof_db_post(id):
+    booking = Booking.query.get(id)
+    pending_booking = Booking.query.filter_by(is_pending=True).all()
+
+    if not booking:
+        flash('Booking does not exist')
+        return redirect(url_for('prof_db'))
+    
+    booking.is_pending = False
+    booking.is_accepted = True
+
+    booking.professional_id = Professional.query.filter_by(user_id=session['user_id']).first().id
+    
+
+
+    db.session.commit()
+    flash('Booking accepted successfully')
+    
+    return redirect(url_for('prof_db',booking=booking,pending_booking=pending_booking))
 
 @app.route('/cust_db')
 def cust_db():
@@ -807,7 +837,12 @@ def catalogue():
     return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location)
 
 
- 
+@app.route('/bookings')
+@auth_reqd
+def bookings():
+    bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
+    return render_template('bookings.html', bookings=bookings)
+
 @app.route('/add_to_booking/<int:service_id>', methods=['POST'])
 @auth_reqd
 def add_to_booking(service_id):
@@ -835,7 +870,8 @@ def add_to_booking(service_id):
             service_id=service_id,
             location=service.location,
             date_of_booking=datetime.now(),
-            date_of_completion=None,
+            date_of_completion=datetime.now(),
+            #take it from customer
             is_pending=True,
             is_completed=False,
             is_canceled=False,
@@ -846,6 +882,12 @@ def add_to_booking(service_id):
     db.session.commit()
     flash('Booking sent successfully')
     return render_template('bookings.html', bookings=[booking])
+
+    
+
+
+
+
     
 
 

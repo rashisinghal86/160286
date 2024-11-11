@@ -3,6 +3,37 @@
 {% block content %}
     
 <h2>professional dashboard</h2>
+<h3>Latest Jobs</h3>
+<table>
+    <td>username</td>
+    {% for open_request in open_requests%}
+        {% if open_request.is_active==True %}
+        
+        
+    
+        <td>{{open_request.id}}</td>
+        <td>{{open_request.customer_id}}</td>
+        <td>{{open_request.location}}</td>
+        <td>{{open_request.date_of_booking}}</td>
+        <td>{{open_request.is_pending}}</td>
+        <td>{{open_request.is_completed}}</td>
+        <a href="{{url_for('prof_db_post', id=open_request.id)}}" class="btn btn-outline-primary">
+           accept
+        </a>
+        <hr>
+        <a href="{{url_for('prof_db_post', id=open_request.id)}}" class="btn btn-outline-danger">
+            
+           decline
+        </a>
+
+        
+        {%endif%}   
+    {%endfor%}
+    
+
+
+</table>
+
 {% endblock %}
 
 
