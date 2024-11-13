@@ -81,8 +81,8 @@ class Schedule(db.Model):#change to Request
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     location = db.Column(db.String(80), nullable=False)
-    schedule_datetime = db.Column(db.DateTime, nullable=False)
-        
+    schedule_datetime= db.Column(db.DateTime, nullable=False)
+
     is_accepted = db.Column(db.Boolean, default=False)
     is_pending = db.Column(db.Boolean, default=True)
     is_active = db.Column(db.Boolean, default=True)

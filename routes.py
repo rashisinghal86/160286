@@ -843,6 +843,12 @@ def add_to_schedule(service_id):
     if not service:
         flash('Service does not exist')
         return redirect(url_for('catalogue'))
+    
+    location = request.form.get('location')
+    if not location:
+        flash('Please enter location')
+        return redirect(url_for('catalogue'))
+    
     schedule_datetime_str = request.form.get('schedule_datetime')
     try:
         schedule_datetime = datetime.strptime(schedule_datetime_str, '%Y-%m-%dT%H:%M')
@@ -859,7 +865,18 @@ def add_to_schedule(service_id):
         flash('Service already added to schedule')
         return redirect(url_for('catalogue'))
     else:
-        schedule = Schedule(customer_id=session['user_id'], service_id=service_id, schedule_datetime=schedule_datetime)
+        schedule = Schedule(
+            customer_id=session['user_id'], 
+            service_id=service_id, 
+            schedule_datetime=schedule_datetime, 
+            location=location,
+            is_pending=True,
+            is_active=True,
+            is_accepted=False,
+            is_cancelled=False,
+            is_completed=False
+        )
+            
        
 
         db.session.add(schedule)

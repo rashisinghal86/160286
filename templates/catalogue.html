@@ -30,13 +30,7 @@
                                 <div class="schedule_datetime">
                                     <form action="{{ url_for('add_to_schedule', service_id=service.id) }}" method="POST" class="form">
                                         <input type="datetime-local" name="schedule_datetime" class="form-control">
-                                        <div class="form-group">
-                                            <input type="hidden" name="is_pending" value="True">
-                                            <input type="hidden" name="is_active" value="True">
-                                            <input type="hidden" name="is_accepted" value="False">
-                                            <input type="hidden" name="is_cancelled" value="False">
-                                            <input type="hidden" name="is_rejected" value="False">
-                                        </div>
+                                        <input type="hidden" name="location" value="{{ service.location }}">
                                         <input type="submit" value="Schedule Services" class="btn btn-success">
                                     </form>
                                 </div>
