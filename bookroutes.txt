@@ -1,0 +1,111 @@
+
+
+# @app.route('/bookings')
+# @auth_reqd
+# def bookings():
+#     bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
+#     return render_template('bookings.html', bookings=bookings)
+
+# @app.route('/add_to_booking/<int:service_id>', methods=['POST'])
+# @auth_reqd
+# def add_to_booking(service_id):
+#     if 'user_id' not in session:
+#         flash('You need to login first')
+#         return redirect(url_for('login'))
+    
+#     service = Service.query.get(service_id)
+#     if not service:
+#         flash('Service does not exist')
+#         return redirect(url_for('catalogue'))
+    
+#     # user = User.query.get(session['user_id'])
+#     # professional = Professional.query.filter_by(user_id=user.id).first()
+    
+#     # if not professional:
+#     #     flash('Professional not found for the service')
+#     #     return redirect(url_for('catalogue'))
+    
+#     booking = Booking.query.filter_by(customer_id=session['user_id'], service_id=service_id).first()
+#     if not booking:
+#         booking = Booking(
+#             customer_id=session['user_id'],
+#             # professional_id=professional.id,
+#             service_id=service_id,
+#             location=service.location,
+#             date_of_booking=datetime.now(),
+#             date_of_completion=datetime.now(),
+#             #take it from customer
+#             is_pending=True,
+#             is_completed=booking.is_completed,
+#             is_canceled=booking.is_canceled,
+#             is_accepted=booking.is_accepted,
+#             is_active=booking.is_active
+#         )
+#         db.session.add(booking)
+#     else:
+#         booking.service_id = service_id
+#         # booking.service.category_id = service.category_id 
+#     db.session.commit()
+#     flash('Booking sent successfully')
+#     return redirect(url_for('bookings'))
+#     #return render_template('bookings.html', bookings=[booking])
+
+# @app.route('/bookings')
+# def bookings():
+#     return render_template('bookings.html')
+
+# @app.route('/bookings', methods=['POST'])
+# def booking_post():
+    
+#     user = User.query.get(session['user_id'])
+#     service = Service.query.get(service.id)
+#     booking= Booking.query.filter_by(service_id=service.id).first()
+#     if booking:
+            
+#         email = request.form['email']
+#         name = request.form['name']
+#         #username = request.form['username']
+#         contact = request.form['contact']
+#         service_type = request.form['service_type']
+#         experience = request.form['experience']
+#         location = request.form['location']
+        
+#     #file upload 
+#     if 'file' in request.files:
+#         file = request.files['file']
+#         if file.filename == '':
+#             flash('No selected file')
+#             return redirect(request.url)
+#         if file and allowed_file(file.filename):
+#             filename = secure_filename(file.filename)
+#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#             flash('File uploaded successfully!')
+
+#    #password    = request.form['password']
+#     if not email or not name or not contact or not service_type or not experience:
+#         flash('Please enter all the fields')
+#         return redirect(url_for('register_pdb'))
+    
+#     new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience, location=location, filename=filename)   
+#     db.session.add(new_professional)
+#     db.session.commit()
+    
+#     #Check if professional-specific details are already provided  
+#     flash('professional registered successfully')
+#     return redirect(url_for('prof_db'
+    
+
+
+
+
+    
+
+
+
+   
+    
+    
+
+    
+    
+    

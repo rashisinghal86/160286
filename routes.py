@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Role,Admin, Professional, Customer, Category, Service, Booking
+from models import db, User, Role,Admin, Professional, Customer, Category, Service, Schedule
 from datetime import datetime
 from functools import wraps
 import os
@@ -820,7 +820,7 @@ def catalogue():
     sname = request.args.get('sname') or ''
     price = request.args.get('price')
     location = request.args.get('location') or ''
-   
+    datetime = request.args.get('datetime') or ''
 
     if price:
         try:
@@ -834,68 +834,42 @@ def catalogue():
 
     if cname:
         categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
-    return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location)
+    return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location, datetime=datetime)
 
-
-@app.route('/bookings')
+@app.route('/add_to_schedule/<int:service_id>', methods=['POST'])
 @auth_reqd
-def bookings():
-    bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
-    return render_template('bookings.html', bookings=bookings)
-
-@app.route('/add_to_booking/<int:service_id>', methods=['POST'])
-@auth_reqd
-def add_to_booking(service_id):
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
+def add_to_schedule(service_id):
     service = Service.query.get(service_id)
     if not service:
         flash('Service does not exist')
         return redirect(url_for('catalogue'))
+    schedule_datetime_str = request.form.get('schedule_datetime')
+    try:
+        schedule_datetime = datetime.strptime(schedule_datetime_str, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        flash('Invalid date format')
+        return redirect(url_for('catalogue'))
     
-    # user = User.query.get(session['user_id'])
-    # professional = Professional.query.filter_by(user_id=user.id).first()
+    if schedule_datetime < datetime.now():
+        flash('Date & booking cannot be in the past')
+        return redirect(url_for('catalogue'))
     
-    # if not professional:
-    #     flash('Professional not found for the service')
-    #     return redirect(url_for('catalogue'))
-    
-    booking = Booking.query.filter_by(customer_id=session['user_id'], service_id=service_id).first()
-    if not booking:
-        booking = Booking(
-            customer_id=session['user_id'],
-            # professional_id=professional.id,
-            service_id=service_id,
-            location=service.location,
-            date_of_booking=datetime.now(),
-            date_of_completion=datetime.now(),
-            #take it from customer
-            is_pending=True,
-            is_completed=False,
-            is_canceled=False,
-            is_accepted=False,
-            is_active=True,
-        )
-        db.session.add(booking)
+    schedule = Schedule.query.filter_by(service_id=service_id,schedule_datetime=schedule_datetime).first()
+    if schedule:
+        flash('Service already added to schedule')
+        return redirect(url_for('catalogue'))
+    else:
+        schedule = Schedule(customer_id=session['user_id'], service_id=service_id, schedule_datetime=schedule_datetime)
+       
+
+        db.session.add(schedule)
     db.session.commit()
-    flash('Booking sent successfully')
-    return render_template('bookings.html', bookings=[booking])
-
-    
-
-
+     
+    flash('Service added to schedule successfully')
+    return redirect(url_for('catalogue'))
 
 
     
-
-
-
-   
-    
     
 
-    
-    
-    
+

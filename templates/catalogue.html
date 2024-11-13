@@ -3,61 +3,66 @@
     {% include 'searchbar.html' with context %}
     <hr>
     <div class="categories-list">
-      {% for category in categories %}
-        <h2>{{ category.name }}</h2>
-        <div class="services">
-            {% for service in category.services %}
-              {% if 
-                  (cname != '' and cname.lower() in category.name.lower() or not cname) and
-                  (sname != '' and sname.lower() in service.name.lower() or not sname) and
-                  (price is not none and price != '' and service.price <= price or not price) and
-                  (location != '' and location.lower() in service.location.lower() or not location)
-              %}
-                <div class="card" style="width: 18rem;">
-                  <img class="card-img-top" src="https://picsum.photos/200/200" alt="{{ service.name }}">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ service.name }}</h5>
-                    <p class="card-text">
-                      <div class="price">
-                        <strong>Price:</strong>
-                        &#8377; {{ service.price }}
-                      </div>
-                      <div class="location">
-                        <strong>Location:</strong>
-                        {{ service.location }}
-                      </div>
-                      <div>
-                        
-                    </p>
-
-                    <div class="quantity-input">
-                    <form action="{{ url_for('add_to_booking', service_id=service.id) }}" method ="POST" class="form">
-                      <input type="submit" value="Book" class="btn btn-success">
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
-        </div>
-      {% endfor %}
+        {% for category in categories %}
+            <h2>{{ category.name }}</h2>
+            <div class="services">
+                {% for service in category.services %}
+                    {% if 
+                        (cname != '' and cname.lower() in category.name.lower() or not cname) and
+                        (sname != '' and sname.lower() in service.name.lower() or not sname) and
+                        (price is not none and price != '' and service.price <= price or not price) and
+                        (location != '' and location.lower() in service.location.lower() or not location)
+                    %}
+                        <div class="card" style="width: 18rem; margin: 10px;">
+                            <img class="card-img-top" src="https://picsum.photos/200/200" alt="{{ service.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ service.name }}</h5>
+                                <p class="card-text">
+                                    <div class="price">
+                                        <strong>Price:</strong>
+                                        &#8377; {{ service.price }}
+                                    </div>
+                                    <div class="location">
+                                        <strong>Location:</strong>
+                                        {{ service.location }}
+                                    </div>
+                                </p>
+                                <div class="schedule_datetime">
+                                    <form action="{{ url_for('add_to_schedule', service_id=service.id) }}" method="POST" class="form">
+                                        <input type="datetime-local" name="schedule_datetime" class="form-control">
+                                        <div class="form-group">
+                                            <input type="hidden" name="is_pending" value="True">
+                                            <input type="hidden" name="is_active" value="True">
+                                            <input type="hidden" name="is_accepted" value="False">
+                                            <input type="hidden" name="is_cancelled" value="False">
+                                            <input type="hidden" name="is_rejected" value="False">
+                                        </div>
+                                        <input type="submit" value="Schedule Services" class="btn btn-success">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block style %}
 <style>
-  .categories-list {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-  .services {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-  }
-  .card {
-      margin: 10px;
-  }
-</style>   
+    .categories-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .services {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .card {
+        margin: 10px;
+    }
+</style>
 {% endblock %}

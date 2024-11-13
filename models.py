@@ -14,25 +14,13 @@ users = db.relationship('User', backref='role', lazy=True)
 class User(db.Model):
     #change id to role id r_id to identify influencers, sponsors
     id = db.Column(db.Integer, primary_key=True)
-    
     username = db.Column(db.String(120), unique=True, nullable=False)
-    passhash = db.Column(db.String(120), nullable=False)
-    #confirm_password = db.Column(db.String(120), nullable=False)
-    
+    passhash = db.Column(db.String(120), nullable=False) 
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     is_flagged = db.Column(db.Boolean, nullable=False, default=False)
     
-   
     roles= db.relationship('Role', backref='user', lazy=True)
-   
-notifications = db.relationship('Notification', backref='user', lazy=True)
-
-class Notification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    reciever_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    is_read = db.Column(db.Boolean, default=False)
 
 class Professional(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,7 +32,6 @@ class Professional(db.Model):
     service_type = db.Column(db.String(80), nullable=False)
     experience = db.Column(db.String(80), nullable=True)
     location = db.Column(db.String(80), nullable=False)
-    
     
     is_verified = db.Column(db.Boolean, default=False)
     is_flagged = db.Column(db.Boolean, default=False)
@@ -58,10 +45,8 @@ class Customer(db.Model):
     
     name = db.Column(db.String(80), nullable=False)
     email  = db.Column(db.String(80), nullable=False)
-    #username = db.Column(db.String(80), unique=True, nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
-    #date= db.Column(db.date, nullable=False)
     users = db.relationship('User', backref='customer', lazy=True)
 
 class Admin(db.Model):
@@ -73,8 +58,7 @@ class Admin(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32),unique=True)
-    #description = db.Column(db.String(256), nullable=True)
-
+    
     services = db.relationship("Service", backref="category", lazy=True, cascade="all, delete-orphan")
 
 class Service(db.Model):
@@ -84,41 +68,48 @@ class Service(db.Model):
     type = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(1024), nullable=False)
     price = db.Column(db.String(64), nullable=False)
-    #add location/pincode
     location = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    #time_reqd
-
     
-    #add date
-    #add time
-    #add duration
     
+    schedules = db.relationship('Schedule', backref='service', lazy=True, cascade="all, delete-orphan")
+    bookings = db.relationship('Booking', backref='service', lazy=True, cascade="all, delete-orphan")
 
-class Booking(db.Model):#change to Request
+class Schedule(db.Model):#change to Request
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     location = db.Column(db.String(80), nullable=False)
-    date_of_booking = db.Column(db.Date, nullable=False)
-    date_of_completion = db.Column(db.Date, nullable=False)
-    #status = db.Column(db.String(80), nullable=False)
-    rating = db.Column(db.Integer, nullable=True)
-    remarks = db.Column(db.String(1024), nullable=True) 
-    
+    schedule_datetime = db.Column(db.DateTime, nullable=False)
+        
     is_accepted = db.Column(db.Boolean, default=False)
-    is_pending = db.Column(db.Boolean, default=False)
-    is_active = db.Column(db.Boolean, default=False)
-    is_canceled = db.Column(db.Boolean, default=False)
+    is_pending = db.Column(db.Boolean, default=True)
+    is_active = db.Column(db.Boolean, default=True)
+    is_cancelled = db.Column(db.Boolean, default=False)
     is_completed = db.Column(db.Boolean, default=False)
     
     
-
-    service_requests = db.relationship('Service', backref='booking', lazy=True)
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
+    amount = db.Column(db.Float, nullable=False)
+    datetime= db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(80), nullable=False)
     
-    
+    bookings =db.relationship('Booking', backref='transaction', lazy=True, cascade="all, delete-orphan")
 
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
+    location = db.Column(db.String(80), nullable=False)       
+    date_of_completion = db.Column(db.Date, nullable=False)
+    rating = db.Column(db.Integer, nullable=True)
+    remarks = db.Column(db.String(1024), nullable=True)
+    
+        
 def add_roles():
     list = ['Admin', 'Professional', 'Customer']
     for role_name in list:

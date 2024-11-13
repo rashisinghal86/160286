@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h1 class="display-1">Service Bookings </h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Category Name</th>
+                <th>Service Name</th>
+                
+                
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Professional Assigned</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.service_requests.category.name }}</td> <!-- Access category name through relationship -->
+                    <td>{{ booking.service_requests.name }}</td> <!-- Access service name through relationship -->
+                    
+                    
+                    <td>{{ booking.date_of_booking }}</td>
+                    <td>
+                        {% if booking.is_pending %}
+                        <a href="#" class="btn btn-secondary">
+                                <i class="fas fa-clock"></i>Pending</a>
+                        {% elif booking.is_accepted %}
+                            Active
+                        {% elif booking.is_completed %}
+                            Completed
+                        {% elif booking.is_canceled %}
+                            Canceled
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if booking.professional_id %}
+                            {{ booking.professional_id }}
+                        {% else %}
+                            Not Assigned
+                        {% endif %}
+                    <td>
+                        <a href="#" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Remove
+                        </a>
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5"><strong>Total Bookings:</strong></td>
+                <td>{{ total_requests }}</td>
+                <td>
+                    <form action="#" method="post">
+                        <button class="btn btn-success">
+                            <i class="fas fa-check-circle"></i> OPEN >> Completed >> CLOSED
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+
+{% block style %}
+<style>
+    .table {
+        width: 100%;
+        margin-top: 20px;
+    }
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .btn-danger, .btn-success {
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
