@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h1 class="display-1"> Schedule </h1>
+    
+    
+
+<hr>
+{% if schedules|length > 0 %}
+    
+<h5>check your schedule before proceeding</h5>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Schedule</th>
+            <th>Service</th>
+            <th>Price</th>
+            <th>Location</th>
+            <th>Schedule</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for schedule in schedules %}
+        <tr>
+            <td>{{ schedule.id }}</td>
+            <td>{{ schedule.service.name }}</td>
+            <td>{{ schedule.service.price }}</td>
+            <td>{{ schedule.service.location }}</td>
+            <td>{{ schedule.schedule_datetime }}</td>
+            <td>
+                <form action="{{url_for('delete_schedule', id=schedule.id)}}" method="post">
+                    <button class="btn btn-danger">
+                        <i class="fas fa-trash"></i>
+                        Re-Schedule
+                    </button>
+                </form>
+            </td>
+            
+            
+            
+                
+        </tr>
+            
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                <form action="{{url_for('confirm')}}" method="post">
+                    <button class="btn btn-success">
+                        <i class="fas fa-booking"></i>
+                        Confirm Schedule
+                    </button>
+                </form>
+            </td> 
+        </tr>           
+            
+    </tfoot>
+</table>
+
+{%else%}
+    <div class="alert alert-warning">
+        <h4 class="alert-heading">No schedule found</h4>
+        <p>There is no schedule found in the database. Please add a schedule to proceed.</p>
+        <a href="{{url_for('catalogue')}}" class="btn btn-outline-primary"> Check catalogue to schedule services</a>
+
+    </div>
+{%endif%}
+{% endblock %}
+

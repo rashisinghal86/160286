@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Role,Admin, Professional, Customer, Category, Service, Schedule
+from models import db, User, Role,Admin, Professional, Customer, Category, Service, Schedule, Transaction, Booking
 from datetime import datetime
 from functools import wraps
 import os
@@ -490,9 +490,9 @@ def prof_db():
     # check for proff in session, and fetch active request accepted by professional
     # pass it into render tempalate and show in html page.
     # [].
-    open_requests = Booking.query.filter_by(is_pending=True).all()
-    accepted_requests = Booking.query.filter_by(is_accepted=True).all()
-    print(open_requests)
+    # open_requests = Booking.query.filter_by(is_pending=True).all()
+    # accepted_requests = Booking.query.filter_by(is_accepted=True).all()
+    # print(open_requests)
 
     return render_template('prof_db.html', prof_name=prof_name, open_requests=open_requests, accepted_requests=accepted_requests)
 
@@ -884,6 +884,56 @@ def add_to_schedule(service_id):
      
     flash('Service added to schedule successfully')
     return redirect(url_for('catalogue'))
+
+@app.route('/schedule')
+@auth_reqd
+def schedule():
+    schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+    return render_template('schedule.html', schedules=schedules)
+
+@app.route('/schedule/<int:id>/delete', methods=['POST'])   
+@auth_reqd
+def delete_schedule(id):
+    schedule = Schedule.query.get(id)        
+    if schedule.customer_id != session['user_id']:
+        flash('You do not have permission to delete this schedule')
+        return redirect(url_for('schedule'))
+    if schedule.is_accepted:
+        flash('You cannot delete an accepted schedule')
+        return redirect(url_for('schedule'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('schedule'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('schedule'))
+    
+    
+    db.session.delete(schedule)
+    db.session.commit()
+    flash('Schedule deleted successfully')
+    return redirect(url_for('schedule'))
+
+@app.route('/confirm', methods=['POST'])
+@auth_reqd
+def confirm():
+    schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+    if not schedules:
+        flash('No schedules to confirm')
+        return redirect(url_for('schedule'))
+    transaction = Transaction(customer_id=session['user_id'], amount=0, datetime=datetime.now(), status='Pending')
+   
+    for schedule in schedules:
+        service = Service.query.get(schedule.service_id)
+        transaction.amount += float(service.price)
+        booking = Booking(transaction=transaction,service=schedule.service,location=schedule.location,date_of_completion=schedule.schedule_datetime.date(),rating=None,remarks=None)
+        db.session.add(booking)
+        db.session.delete(schedule)
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash('Booking confirmed successfully')
+    return redirect(url_for('schedule'))
 
 
     
