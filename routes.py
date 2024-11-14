@@ -933,10 +933,14 @@ def confirm():
     db.session.commit()
 
     flash('Booking confirmed successfully')
-    return redirect(url_for('schedule'))
+    return redirect(url_for('bookings'))
 
-
-    
+@app.route('/bookings')
+@auth_reqd
+def bookings():
+    transactions = Transaction.query.filter_by(customer_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
+    #bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
+    return render_template('bookings1.html', transactions = transactions) 
     
 
 
