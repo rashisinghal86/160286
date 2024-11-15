@@ -77,7 +77,7 @@ def home():
 @app.route('/register')
 def register():
     role = Role.query.all()
-    print(role)
+    
     return render_template('register.html', role=role)
 
 @app.route('/register', methods=['POST'])
@@ -215,7 +215,7 @@ def register_pdb_post():
     professional= Professional.query.filter_by(user_id=user.id).first()
     if professional:
         #return ('already registered professional page' )
-        return redirect(url_for('prof_db', name=professional.users.name))
+        return redirect(url_for('prof_db', name=professional.users.username))
     
     email = request.form['email']
     name = request.form['name']
@@ -240,7 +240,7 @@ def register_pdb_post():
     if not email or not name or not contact or not service_type or not experience:
         flash('Please enter all the fields')
         return redirect(url_for('register_pdb'))
-    
+        
     new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience, location=location, filename=filename)   
     db.session.add(new_professional)
     db.session.commit()
@@ -272,16 +272,8 @@ def professionals():
 
 
 @app.route('/admin/pending_professionals')
+@admin_reqd
 def pending_professionals():
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You do not have permission to access this page')
-        return redirect(url_for('login'))
-    
     pending_professionals = Professional.query.filter_by(is_verified=False,is_flagged=False).all()
     approved_professionals = Professional.query.filter_by(is_verified=True).all()
     blocked_professionals = Professional.query.filter_by(is_flagged=True).all()
@@ -307,17 +299,8 @@ def pending_professionals():
 
 # Admin route to approve professional
 @app.route('/admin/approve_professional/<int:id>', methods=['POST'])
-def approve_professional(id):
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You have permission to access this page')
-        return redirect(url_for('login'))
-    
-    
+@admin_reqd
+def approve_professional(id):    
     professional = Professional.query.get(id)
     if professional:
         professional.is_verified = True
@@ -328,16 +311,8 @@ def approve_professional(id):
 
 # Admin route to block professional
 @app.route('/admin/block_professional/<int:id>', methods=['POST'])
-def block_professional(id):
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You have permission to access this page')
-        return redirect(url_for('login'))
-    
+@admin_reqd
+def block_professional(id):    
     professional = Professional.query.get(id)
     if professional:
         professional.is_flagged = True
@@ -349,16 +324,8 @@ def block_professional(id):
 
 # Admin route to unblock professional
 @app.route('/admin/unblock_professional/<int:id>', methods=['POST'])
-def unblock_professional(id):
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You have permission to access this page')
-        return redirect(url_for('login'))
-    
+@admin_reqd
+def unblock_professional(id):   
     professional = Professional.query.get(id)
     if professional:
         professional.is_flagged = False
@@ -366,7 +333,19 @@ def unblock_professional(id):
         flash(f'Professional {professional.name} unblocked successfully')
     return redirect(url_for('pending_professionals'))
 
+#  professional dashboard link to show all the appointments- accept/ reject
+@app.route('/view_appointments')
+@auth_reqd
+def view_appointments():
+    professional = Professional.query.filter_by(user_id=session['user_id']).first()
 
+    if not professional:
+        flash('Professional does not exist')
+        return redirect(url_for('login'))
+    schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
+   
+    return render_template('view_appointments.html', schedules=schedules)
+    
 
 
 
@@ -429,16 +408,8 @@ def customers():
 
 #admin route to manage customers
 @app.route('/admin/manage_customers')
-def manage_customers():
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You do not have permission to access this page')
-        return redirect(url_for('login'))
-    
+@admin_reqd 
+def manage_customers():   
     unblocked_customers = Customer.query.filter_by(is_blocked=False).all()
     blocked_customers = Customer.query.filter_by(is_blocked=True).all()
 
@@ -446,16 +417,8 @@ def manage_customers():
         
 # Admin route to block customer
 @app.route('/admin/block_customer/<int:id>', methods=['POST'])
-def block_customer(id):
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You have permission to access this page')
-        return redirect(url_for('login'))
-    
+@admin_reqd
+def block_customer(id):   
     customer = Customer.query.get(id)
     if customer:
         customer.is_blocked = True
@@ -466,16 +429,8 @@ def block_customer(id):
 
 # Admin route to unblock customer
 @app.route('/admin/unblock_customer/<int:id>', methods=['POST'])
+@admin_reqd
 def unblock_customer(id):
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You have permission to access this page')
-        return redirect(url_for('login'))
-    
     customer = Customer.query.get(id)
     if customer:
         customer.is_blocked = False
@@ -490,11 +445,12 @@ def prof_db():
     # check for proff in session, and fetch active request accepted by professional
     # pass it into render tempalate and show in html page.
     # [].
-    # open_requests = Booking.query.filter_by(is_pending=True).all()
+    #open_requests = Schedule.query.filter_by(is_pending=True).all()
     # accepted_requests = Booking.query.filter_by(is_accepted=True).all()
     # print(open_requests)
 
-    return render_template('prof_db.html', prof_name=prof_name, open_requests=open_requests, accepted_requests=accepted_requests)
+    return render_template('prof_db.html', prof_name=prof_name)
+    
 
 @app.route('/prof_db/<int:id>')
 def prof_db_post(id):

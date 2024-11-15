@@ -44,7 +44,15 @@ def bookings():
     
 
 
-
+def block_professional(id):
+    if 'user_id' not in session:
+        flash('You need to login first')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.is_admin:
+        flash('You have permission to access this page')
+        return redirect(url_for('login'))
 
 # @app.route('/view_user2')
 # @auth_reqd

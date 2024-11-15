@@ -4,6 +4,9 @@
     
 <h2>professional dashboard</h2>
 <h3>Latest Jobs</h3>
+<a href="{{url_for('view_appointments')}}">
+    <button class="btn btn-primary">View Appointments</button>
+</a>
 <table>
     <td>username</td>
     {% for open_request in open_requests%}

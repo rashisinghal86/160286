@@ -12,13 +12,12 @@ class Role(db.Model):
 users = db.relationship('User', backref='role', lazy=True)
 
 class User(db.Model):
-    #change id to role id r_id to identify influencers, sponsors
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
     passhash = db.Column(db.String(120), nullable=False) 
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    is_flagged = db.Column(db.Boolean, nullable=False, default=False)
     
     roles= db.relationship('Role', backref='user', lazy=True)
 
@@ -35,19 +34,19 @@ class Professional(db.Model):
     
     is_verified = db.Column(db.Boolean, default=False)
     is_flagged = db.Column(db.Boolean, default=False)
-    is_suspended = db.Column(db.Boolean, default=False)
     
     users = db.relationship('User', backref='professional', lazy=True)
 
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    
     name = db.Column(db.String(80), nullable=False)
     email  = db.Column(db.String(80), nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
     users = db.relationship('User', backref='customer', lazy=True)
+
+    is_blocked = db.Column(db.Boolean, default=False)
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -70,7 +69,6 @@ class Service(db.Model):
     price = db.Column(db.String(64), nullable=False)
     location = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    
     
     schedules = db.relationship('Schedule', backref='service', lazy=True, cascade="all, delete-orphan")
     bookings = db.relationship('Booking', backref='service', lazy=True, cascade="all, delete-orphan")

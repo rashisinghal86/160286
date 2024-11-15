@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h1 class="display-1">Schedule Appointments </h1>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Appointment</th>
+                    <th>Service</th>
+                    <th>Price</th>
+                    <th>Location</th>
+                    <th>Scheduled_date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr>
+                    <td>{{ schedule.id }}</td>
+                    <td>{{ schedule.service.name }}</td>
+                    <td>{{ schedule.service.price }}</td>
+                    <td>{{ schedule.service.location }}</td>
+                    <td>{{ schedule.schedule_datetime }}</td>
+                    <td>
+                        <form action="{{url_for('delete_schedule', id=schedule.id)}}" method="post">
+                            <button class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                                professional should be allowed only to accept. if he deletes/ declines schedule will be removed from db.
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <form action="{{url_for('confirm')}}" method="post">
+                            <button class="btn btn-success">
+                                <i class="fas fa-booking"></i>
+                                Confirm Schedule
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+            </tfoot>
+
+        </table>
+
+    </div>
+    
+    
+{% endblock %}
