@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+{% block title %}
+Schedules  Management#
+{% endblock %}
+{% block content %}
+
+<h1 class="display">Schedules  Management</h1>
+<h2>add review button for proff</h2>
+<a href="{{url_for('prof_db')}}" class="btn btn-primary">
+    <i class="fa fa-angle-left"></i>
+    back</a>
+    <div class="container mt-5">
+    <h2>Pending Schedules </h2>
+    <h6>Total Pending Schedules  = {{pending_schedules |length}}</h6>
+    <hr>
+    <div class="container mt-5">
+        
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Service Type</th>
+                <th>Document</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+
+            {% for schedule  in pending_schedules  %}
+            <tr>
+                <td>{{ schedule .name }}</td>
+                <td>{{ schedule .location }}</td>
+                <td>{{ schedule .service_type }}</td>
+                
+                <td>
+                    <a href="{{ url_for('static', filename='uploads/' ~ schedule .filename) }}" target="_blank">View Document</a>
+                </td>
+                <td>
+                    <form action="{{ url_for('approve_schedule ', id=schedule .id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form action="{{ url_for('block_schedule ', id=schedule .id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                    </form>
+                    
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- {%if pname%}
+{%for s in sp %}
+<li>
+    {{s.name}} | {{s.email}} | {{s.location}}
+</li>
+{%endfor%}
+{%endif%} -->
+
+        <div class="container mt-5">
+            <h2>Approved Schedules </h2>
+            <h6>total accepted schedules  = {{accepted_schedules |length}}</h6>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Service Type</th>
+                        <th>Document</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule  in accepted_schedules  %}
+                    <tr>
+                        <td>{{ schedule .name }}</td>
+                        <td>{{ schedule .location }}</td>
+                        <td>{{ schedule .service_type }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('static', filename='uploads/' ~ schedule .filename) }}" target="_blank">View Document</a>
+                        </td>
+                        <td>
+                            
+                            <form action="{{ url_for('block_schedule ', id=schedule .id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="container mt-5">
+            <h2>Blocked Schedules </h2>
+            <h6>total Blocked schedules  = {{blocked_schedules |length}}</h6>
+            
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Service Type</th>
+                        <th>Document</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule  in blocked_schedules  %}
+                    <tr>
+                        <td>{{ schedule .name }}</td>
+                        <td>{{ schedule .location }}</td>
+                        <td>{{ schedule .service_type }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('static', filename='uploads/' ~ schedule .filename) }}" target="_blank">View Document</a>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('unblock_schedule ', id=schedule .id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-warning btn-sm">Unblock</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>     
+    </div>
+</body>
+</html>
+{% endblock %}

@@ -4,13 +4,13 @@ Professionals Management
 {% endblock %}
 {% block content %}
 {% include 'searchbar2.html' with context %}
-<h1 class="display">Search Professionals</h1>
+<br>
 <a href="{{url_for('pending_professionals')}}" class="btn btn-primary">
     <i class="fa fa-angle-left"></i>
     back
 </a>
 <hr>
-<h2>List Of All Professionals</h2>
+<h2>Search professional from all the professionals </h2>
 <div class="professionals-list">
     {% for professional in professionals %}
         {% if 

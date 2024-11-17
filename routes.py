@@ -250,16 +250,8 @@ def register_pdb_post():
     return redirect(url_for('prof_db'))
 
 @app.route('/admin/professionals')
-def professionals():
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You do not have permission to access this page')
-        return redirect(url_for('login'))
-        
+@admin_reqd
+def professionals():   
     professionals=Professional.query.all()
     pname = request.args.get('pname') or ''
     pservice_type = request.args.get('pservice_type') or ''
@@ -334,17 +326,6 @@ def unblock_professional(id):
     return redirect(url_for('pending_professionals'))
 
 #  professional dashboard link to show all the appointments- accept/ reject
-@app.route('/view_appointments')
-@auth_reqd
-def view_appointments():
-    professional = Professional.query.filter_by(user_id=session['user_id']).first()
-
-    if not professional:
-        flash('Professional does not exist')
-        return redirect(url_for('login'))
-    schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
-   
-    return render_template('view_appointments.html', schedules=schedules)
     
 
 
@@ -387,16 +368,8 @@ def register_cdb_post():
 
 #Admin route to search customers and blocked/unblocked.
 @app.route('/admin/customers')
-def customers():
-    if 'user_id' not in session:
-        flash('You need to login first')
-        return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    if user.is_admin:
-        flash('You do not have permission to access this page')
-        return redirect(url_for('login'))
-        
+@auth_reqd
+def customers():  
     customers=Customer.query.all()
     cname = request.args.get('cname') or ''
     clocation = request.args.get('clocation') or ''
@@ -414,7 +387,18 @@ def manage_customers():
     blocked_customers = Customer.query.filter_by(is_blocked=True).all()
 
     return render_template('manage_customers.html',unblocked_customers=unblocked_customers, blocked_customers=blocked_customers)
-        
+
+# Admin route to unblock customer
+@app.route('/admin/unblock_customer/<int:id>', methods=['POST'])
+@admin_reqd
+def unblock_customer(id):
+    customer = Customer.query.get(id)
+    if customer:
+        customer.is_blocked = False
+        db.session.commit()
+        flash(f'Customer {customer.name} unblocked successfully')
+    return redirect(url_for('manage_customers'))  
+
 # Admin route to block customer
 @app.route('/admin/block_customer/<int:id>', methods=['POST'])
 @admin_reqd
@@ -426,17 +410,7 @@ def block_customer(id):
         db.session.commit()
         flash(f'Customer {customer.name} blocked successfully')
     return redirect(url_for('manage_customers'))
-
-# Admin route to unblock customer
-@app.route('/admin/unblock_customer/<int:id>', methods=['POST'])
-@admin_reqd
-def unblock_customer(id):
-    customer = Customer.query.get(id)
-    if customer:
-        customer.is_blocked = False
-        db.session.commit()
-        flash(f'Customer {customer.name} unblocked successfully')
-    return redirect(url_for('manage_customers'))     
+# ------------------------------------------------------------------------#  
 
 @app.route('/prof_db')
 def prof_db():
@@ -473,9 +447,6 @@ def prof_db_post(id):
     
     return redirect(url_for('prof_db',booking=booking,pending_booking=pending_booking))
 
-@app.route('/cust_db')
-def cust_db():
-    return render_template('cust_db.html')
 
 #-----3. signout-------------------------
 @app.route('/signout')
@@ -760,15 +731,18 @@ def delete_service_post(id):
 #     return render_template('applybook.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
 
 # -----------user-pages-----------------------------------
+@app.route('/cust_db')
+def cust_db():
+    return render_template('cust_db.html')
 
 @app.route('/catalogue')
 @auth_reqd
 def catalogue():
     #user_id in session/ if user id exists in session we will allow them to see catalogue.html
     #if user is an admin he goes to admin page else user page>> get user
-    user=User.query.get(session['user_id'])
-    if user.is_admin:
-        return redirect(url_for('admin'))
+    # user=User.query.get(session['user_id'])
+    # if user.is_admin:
+    #     return redirect(url_for('admin'))
     
     categories=Category.query.all()
 
@@ -841,11 +815,19 @@ def add_to_schedule(service_id):
     flash('Service added to schedule successfully')
     return redirect(url_for('catalogue'))
 
+
+
+
+
+
+
+# ------------------------routes from cust_db--------------------
 @app.route('/schedule')
 @auth_reqd
 def schedule():
     schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
     return render_template('schedule.html', schedules=schedules)
+
 
 @app.route('/schedule/<int:id>/delete', methods=['POST'])   
 @auth_reqd
@@ -863,6 +845,8 @@ def delete_schedule(id):
     if schedule.is_completed:
         flash('Schedule already completed')
         return redirect(url_for('schedule'))
+    schedule.is_active = False
+    schedule.is_cancelled = True
     
     
     db.session.delete(schedule)
@@ -898,5 +882,90 @@ def bookings():
     #bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
     return render_template('bookings1.html', transactions = transactions) 
     
+# ----booking request to professional-------------------   
+@app.route('/pending_booking')
+@auth_reqd
+def pending_booking():
+    professional = Professional.query.filter_by(user_id=session['user_id']).first()
+
+    if not professional:
+        flash('Professional does not exist')
+        return redirect(url_for('login'))
+    
+    schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
+    return render_template('view_appointments.html', schedules=schedules)
+
+
+# route for accept appointment
+@app.route('/accept_appointment/<int:id>', methods=['POST'])
+@auth_reqd
+def accept_appointment(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('Schedule does not exist')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_accepted:
+        flash('Schedule already accepted')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('pending_booking'))
+    schedule.professional_id = Professional.query.filter_by(user_id=session['user_id']).first().id
+    schedule.is_accepted = True
+    schedule.is_pending = False
+
+    db.session.commit()
+    db.session.delete(schedule)
+    #delete from prof table
+    flash('Schedule accepted successfully')
+    return redirect(url_for('pending_booking'))
+
+#route for cancel appointment
+@app.route('/cancel_appointment/<int:id>', methods=['POST'])
+@auth_reqd
+def cancel_appointment(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('Schedule does not exist')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_accepted:
+        flash('You cannot cancel an accepted schedule')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('pending_booking'))
+    db.session.delete(schedule)
+    db.session.commit()
+    flash('Schedule cancelled successfully')
+
+    return redirect(url_for('pending_booking'))
+
+#route for complete appointment
+@app.route('/complete_appointment/<int:id>', methods=['POST'])
+@auth_reqd
+def complete_appointment(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('Schedule does not exist')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_accepted:
+        flash('You cannot complete an accepted schedule')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('pending_booking'))
+    schedule.is_completed = True
+    db.session.commit()
+    flash('Schedule completed successfully')
+    return redirect(url_for('pending_booking'))
 
 
