@@ -130,7 +130,7 @@ def login_post():
     
     user = User.query.filter_by(username=username).first()
     if not user:
-        flash('Username has been taken')
+        flash('You are not registered, Register to login')
         return redirect(url_for('login'))
     
     
@@ -157,11 +157,22 @@ def login_post():
 
     elif role.name == 'Professional':
         professional = Professional.query.filter_by(user_id=user.id).first()
-        if professional:
+        print(professional)
+        print(professional)
+        print(professional)
+        if not professional:
+            return redirect(url_for('register_pdb'))
+        if professional.is_flagged:
+                return render_template('test.html')
+
+        if professional and professional.is_verified:
+            
             #return ('already registered professional page')
             return redirect(url_for('prof_db', username=professional.users.username))
-        else:
-            return redirect(url_for('register_pdb'))
+        if professional and not professional.is_verified:
+            return render_template('verify_prof.html')
+            
+        
         
     elif role.name == 'Customer':
         customer = Customer.query.filter_by(user_id=user.id).first()
@@ -211,11 +222,11 @@ def register_pdb():
 @app.route('/register_pdb', methods=['POST'])
 def register_pdb_post():
     
-    user = User.query.get(session['user_id'])
-    professional= Professional.query.filter_by(user_id=user.id).first()
-    if professional:
-        #return ('already registered professional page' )
-        return redirect(url_for('prof_db', name=professional.users.username))
+    # professional= Professional.query.filter_by(user_id=user.id).first()
+
+    # if professional:
+    #     #return ('already registered professional page' )
+    #     return redirect(url_for('prof_db', name=professional.users.username))
     
     email = request.form['email']
     name = request.form['name']
@@ -240,14 +251,31 @@ def register_pdb_post():
     if not email or not name or not contact or not service_type or not experience:
         flash('Please enter all the fields')
         return redirect(url_for('register_pdb'))
-        
+
+    user = User.query.get(session['user_id'])
+  
     new_professional = Professional(user_id=user.id, email=email, name=name, contact=contact, service_type=service_type, experience=experience, location=location, filename=filename)   
     db.session.add(new_professional)
     db.session.commit()
+
     
     #Check if professional-specific details are already provided  
     flash('professional registered successfully')
-    return redirect(url_for('prof_db'))
+    user = User.query.get(session['user_id'])
+    professional = Professional.query.filter_by(user_id=user.id).first()
+    print(professional)
+
+    print(professional.is_verified)
+    print(professional.is_flagged)
+    
+    if professional.is_verified:
+        return redirect(url_for('prof_db'))
+    if professional.is_flagged:
+        return render_template('test.html')
+    if not professional.is_verified:
+        return render_template('verify_prof.html')
+    
+
 
 @app.route('/admin/professionals')
 @admin_reqd
@@ -950,7 +978,6 @@ def confirm():
         flash('Booking accepted successfully')
         return redirect(url_for('bookings'))
 
-        
 
 
 
@@ -971,6 +998,7 @@ def bookings():
     else:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))
+    
     
 # ----booking request to professional-------------------   
 @app.route('/pending_booking')

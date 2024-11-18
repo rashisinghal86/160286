@@ -33,6 +33,14 @@
                             <td>{{booking.rating}}</td>
                             <td>{{booking.remarks}}</td>
                             <td>{{booking.transaction.status}}</td>
+                            
+                                <form action="#" method="post">
+                                    <button class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                        Cancel
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
