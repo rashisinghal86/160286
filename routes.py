@@ -825,9 +825,32 @@ def add_to_schedule(service_id):
 @app.route('/schedule')
 @auth_reqd
 def schedule():
-    schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
-    return render_template('schedule.html', schedules=schedules)
+    user = User.query.get(session['user_id'])
+    role_id = user.role_id
+    if role_id == 2:
+        professional = Professional.query.filter_by(user_id=session['user_id']).first()
 
+        if not professional:
+            flash('Professional does not exist')
+            return redirect(url_for('login'))
+    
+        schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
+        return render_template('view_appointments.html', schedules=schedules)
+    
+    elif role_id == 3:
+            customer = Customer.query.filter_by(user_id=session['user_id']).first()
+
+            if not customer:
+                flash('Customer does not exist')
+                return redirect(url_for('login'))
+            schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+            schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+            return render_template('schedule.html', schedules=schedules)
+    else:
+        flash('You are not authorized to access this page')
+        return redirect(url_for('home'))
+        
+        
 
 @app.route('/schedule/<int:id>/delete', methods=['POST'])   
 @auth_reqd
