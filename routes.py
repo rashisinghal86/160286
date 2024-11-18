@@ -860,33 +860,31 @@ def delete_schedule(id):
     if role_id != 3:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))
-    else:
-    schedule = Schedule.query.get(id)        
+    
     schedule = Schedule.query.get(id)        
     if schedule.customer_id != session['user_id']:
         flash('You do not have permission to delete this schedule')
         return redirect(url_for('schedule'))
-        schedule = Schedule.query.get(id)       
     if schedule.customer_id != session['user_id']:
         flash('You do not have permission to delete this schedule')
         return redirect(url_for('schedule'))
-        if schedule.is_accepted:
-            flash('You cannot delete an accepted schedule')
-            return redirect(url_for('schedule'))
-        if schedule.is_cancelled:
-            flash('Schedule already cancelled')
-            return redirect(url_for('schedule'))
-        if schedule.is_completed:
-            flash('Schedule already completed')
-            return redirect(url_for('schedule'))
-        schedule.is_active = False
-        schedule.is_cancelled = True
-        
-        
-        db.session.delete(schedule)
-        db.session.commit()
-        flash('Schedule deleted successfully')
+    if schedule.is_accepted:
+        flash('You cannot delete an accepted schedule')
         return redirect(url_for('schedule'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('schedule'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('schedule'))
+    schedule.is_active = False
+    schedule.is_cancelled = True
+    
+    
+    db.session.delete(schedule)
+    db.session.commit()
+    flash('Schedule deleted successfully')
+    return redirect(url_for('schedule'))
     
 
 @app.route('/confirm', methods=['POST'])

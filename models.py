@@ -44,6 +44,7 @@ class Customer(db.Model):
     email  = db.Column(db.String(80), nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
+
     users = db.relationship('User', backref='customer', lazy=True)
 
     is_blocked = db.Column(db.Boolean, default=False)
@@ -52,6 +53,7 @@ class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
     user = db.relationship('User', backref='admin', lazy=True)
 
 class Category(db.Model):
