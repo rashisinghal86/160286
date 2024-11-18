@@ -23,7 +23,7 @@
                             <td>{{ schedule.location }}</td>
                             <td>{{ schedule.schedule_datetime }}</td>
                             <td>
-                                <form action="{{ url_for('accept_appointment', id=schedule.id) }}" method="post">
+                                <form action="{{ url_for('confirm')}}" method="post">
                                     <button class="btn btn-success">
                                         <i class="fas fa-check"></i>
                                         Accept

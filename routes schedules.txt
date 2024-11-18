@@ -239,3 +239,9 @@ def complete_appointment(id):
     return redirect(url_for('pending_booking'))
 
 
+        schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
+        if not schedules:
+            flash('No schedules to accept')
+            return redirect(url_for('schedule'))
+        
+        for schedule in schedules:
