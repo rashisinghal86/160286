@@ -1,0 +1,241 @@
+@app.route('/cust_db')
+def cust_db():
+    return render_template('cust_db.html')
+
+@app.route('/catalogue')
+@auth_reqd
+def catalogue():
+    #user_id in session/ if user id exists in session we will allow them to see catalogue.html
+    #if user is an admin he goes to admin page else user page>> get user
+    # user=User.query.get(session['user_id'])
+    # if user.is_admin:
+    #     return redirect(url_for('admin'))
+    
+    categories=Category.query.all()
+
+    cname = request.args.get('cname') or ''
+    sname = request.args.get('sname') or ''
+    price = request.args.get('price')
+    location = request.args.get('location') or ''
+    datetime = request.args.get('datetime') or ''
+
+    if price:
+        try:
+            price = float(price)
+        except ValueError:
+            flash('Invalid price')
+            return redirect(url_for('catalogue'))
+        if price <= 0:
+            flash('Price cannot be negative')
+            return redirect(url_for('catalogue'))
+
+    if cname:
+        categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
+    return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location, datetime=datetime)
+
+@app.route('/add_to_schedule/<int:service_id>', methods=['POST'])
+@auth_reqd
+def add_to_schedule(service_id):
+    service = Service.query.get(service_id)
+    if not service:
+        flash('Service does not exist')
+        return redirect(url_for('catalogue'))
+    
+    location = request.form.get('location')
+    if not location:
+        flash('Please enter location')
+        return redirect(url_for('catalogue'))
+    
+    schedule_datetime_str = request.form.get('schedule_datetime')
+    try:
+        schedule_datetime = datetime.strptime(schedule_datetime_str, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        flash('Invalid date format')
+        return redirect(url_for('catalogue'))
+    
+    if schedule_datetime < datetime.now():
+        flash('Date & booking cannot be in the past')
+        return redirect(url_for('catalogue'))
+    
+    schedule = Schedule.query.filter_by(service_id=service_id,schedule_datetime=schedule_datetime).first()
+    if schedule:
+        flash('Service already added to schedule')
+        return redirect(url_for('catalogue'))
+    else:
+        schedule = Schedule(
+            customer_id=session['user_id'], 
+            service_id=service_id, 
+            schedule_datetime=schedule_datetime, 
+            location=location,
+            is_pending=True,
+            is_active=True,
+            is_accepted=False,
+            is_cancelled=False,
+            is_completed=False
+        )
+            
+       
+
+        db.session.add(schedule)
+    db.session.commit()
+     
+    flash('Service added to schedule successfully')
+    return redirect(url_for('catalogue'))
+
+
+
+
+
+
+
+# ------------------------routes from cust_db--------------------
+@app.route('/schedule')
+@auth_reqd
+def schedule():
+    schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+    return render_template('schedule.html', schedules=schedules)
+
+
+@app.route('/schedule/<int:id>/delete', methods=['POST'])   
+@auth_reqd
+def delete_schedule(id):
+    schedule = Schedule.query.get(id)        
+    if schedule.customer_id != session['user_id']:
+        flash('You do not have permission to delete this schedule')
+        return redirect(url_for('schedule'))
+    if schedule.is_accepted:
+        flash('You cannot delete an accepted schedule')
+        return redirect(url_for('schedule'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('schedule'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('schedule'))
+    schedule.is_active = False
+    schedule.is_cancelled = True
+    
+    
+    db.session.delete(schedule)
+    db.session.commit()
+    flash('Schedule deleted successfully')
+    return redirect(url_for('schedule'))
+
+@app.route('/confirm', methods=['POST'])
+@auth_reqd
+def confirm():
+    schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+    if not schedules:
+        flash('No schedules to confirm')
+        return redirect(url_for('schedule'))
+    transaction = Transaction(customer_id=session['user_id'], amount=0, datetime=datetime.now(), status='Pending')
+   
+    for schedule in schedules:
+        service = Service.query.get(schedule.service_id)
+        transaction.amount += float(service.price)
+        booking = Booking(transaction=transaction,service=schedule.service,location=schedule.location,date_of_completion=schedule.schedule_datetime.date(),rating=None,remarks=None)
+        db.session.add(booking)
+        db.session.delete(schedule)
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash('Booking confirmed successfully')
+    return redirect(url_for('bookings'))
+
+    
+    
+@app.route('/bookings')
+@auth_reqd
+def bookings():
+    transactions = Transaction.query.filter_by(customer_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
+    #bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
+    return render_template('bookings1.html', transactions = transactions) 
+    
+# ----booking request to professional-------------------   
+@app.route('/pending_booking')
+@auth_reqd
+def pending_booking():
+    professional = Professional.query.filter_by(user_id=session['user_id']).first()
+
+    if not professional:
+        flash('Professional does not exist')
+        return redirect(url_for('login'))
+    
+    schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
+    return render_template('view_appointments.html', schedules=schedules)
+
+
+# route for accept appointment
+@app.route('/accept_appointment/<int:id>', methods=['POST'])
+@auth_reqd
+def accept_appointment(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('Schedule does not exist')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_accepted:
+        flash('Schedule already accepted')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('pending_booking'))
+    schedule.professional_id = Professional.query.filter_by(user_id=session['user_id']).first().id
+    schedule.is_accepted = True
+    schedule.is_pending = False
+    transaction=
+    db.session.commit()
+    db.session.add(transaction)
+    db.session.delete(schedule)
+    #delete from prof table
+    flash('Schedule accepted successfully')
+    return redirect(url_for('test.html'))
+
+#route for cancel appointment
+@app.route('/cancel_appointment/<int:id>', methods=['POST'])
+@auth_reqd
+def cancel_appointment(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('Schedule does not exist')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_accepted:
+        flash('You cannot cancel an accepted schedule')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('pending_booking'))
+    db.session.delete(schedule)
+    db.session.commit()
+    flash('Schedule cancelled successfully')
+
+    return redirect(url_for('pending_booking'))
+
+#route for complete appointment
+@app.route('/complete_appointment/<int:id>', methods=['POST'])
+@auth_reqd
+def complete_appointment(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('Schedule does not exist')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_accepted:
+        flash('You cannot complete an accepted schedule')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_cancelled:
+        flash('Schedule already cancelled')
+        return redirect(url_for('pending_booking'))
+    if schedule.is_completed:
+        flash('Schedule already completed')
+        return redirect(url_for('pending_booking'))
+    schedule.is_completed = True
+    db.session.commit()
+    flash('Schedule completed successfully')
+    return redirect(url_for('pending_booking'))
+
+
