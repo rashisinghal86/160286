@@ -968,7 +968,7 @@ def bookings():
     #bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
         return render_template('bookings1.html', transactions = transactions) 
     elif role_id == 2:        
-        transactions = Transaction.query.filter_by(professional_id=professional.id).order_by(Transaction.datetime.desc()).all()
+        transactions = Transaction.query.filter_by(professional_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
         return render_template('bookings1.html', transactions = transactions)
     else:
         flash('You are not authorized to access this page')
