@@ -44,7 +44,25 @@ def admin_reqd(func):
         return func(*args,**kwargs)
     return inner
 
-    
+def blocked_check(func):
+    @wraps(func)
+    def inner(*args,**kwargs):
+        if 'user_id' not in session:
+            flash('Please login to continue')
+            return redirect(url_for('login'))
+        
+        user = User.query.get(session['user_id'])
+        role = Role.query.get(user.role_id)
+        if role.name == 'Professional':
+            professional = Professional.query.filter_by(user_id=user.id).first()
+            if professional.is_flagged:
+                return render_template('flag_prof.html', professional=professional)
+        elif role.name == 'Customer':
+            customer = Customer.query.filter_by(user_id=user.id).first()
+            if customer.is_blocked:
+                return render_template('block_cust.html', customer=customer)
+        return func(*args,**kwargs)
+    return inner
 
 #----- home page-----
 @app.route('/')
@@ -551,14 +569,26 @@ def admin_db():
     categories=Category.query.all()
     category_names = [category.name for category in categories]
     category_sizes = [len(category.services) for category in categories]
+    
+    
+    pending_professionals = [Professional.query.filter_by(is_verified=False).count()]
+    blocked_professionals = [Professional.query.filter_by(is_flagged=True).count()]
+    approved_professionals = [Professional.query.filter_by(is_verified=True).count()]
 
-    return render_template('admin_db.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
+    blocked_customers = [Customer.query.filter_by(is_blocked=True).count()]
+    unblocked_customers = [Customer.query.filter_by(is_blocked=False).count()]
+
+    return render_template('admin_db.html', categories=categories, category_names=category_names, category_sizes=category_sizes, blocked_professionals=blocked_professionals, pending_professionals=pending_professionals, approved_professionals=approved_professionals, blocked_customers=blocked_customers, unblocked_customers=unblocked_customers)
 #----------------Add category pages-----------------------------------
 
 @app.route('/category/add')
 @admin_reqd
 def add_category():
-    return render_template('category/add.html')
+    categories=Category.query.all()
+    category_names = [category.name for category in categories]
+    category_sizes = [len(category.services) for category in categories]
+
+    return render_template('category/add.html', categories=categories, category_names=category_names, category_sizes=category_sizes)
 
 @app.route('/category/add',methods=['POST'])
 @admin_reqd
