@@ -160,22 +160,27 @@ def login_post():
         print(professional)
         print(professional)
         print(professional)
+
         if not professional:
             return redirect(url_for('register_pdb'))
         if professional.is_flagged:
-                return render_template('test.html')
+                professional = Professional.query.filter_by(user_id=user.id).first()
+                return render_template('flag_prof.html', professional=professional)
 
         if professional and professional.is_verified:
             
             #return ('already registered professional page')
             return redirect(url_for('prof_db', username=professional.users.username))
         if professional and not professional.is_verified:
-            return render_template('verify_prof.html')
+            professional = Professional.query.filter_by(user_id=user.id).first()
+            return render_template('verify_prof.html',professional=professional)
             
         
         
     elif role.name == 'Customer':
         customer = Customer.query.filter_by(user_id=user.id).first()
+        if customer.is_blocked:
+            return render_template('block_cust.html', customer=customer)
         if customer:
             #return ('already registered customer page')
             return redirect(url_for('cust_db', username=customer.users.username))
@@ -261,19 +266,20 @@ def register_pdb_post():
     
     #Check if professional-specific details are already provided  
     flash('professional registered successfully')
-    user = User.query.get(session['user_id'])
-    professional = Professional.query.filter_by(user_id=user.id).first()
-    print(professional)
+    return redirect(url_for('prof_db'))
+    # user = User.query.get(session['user_id'])
+    # professional = Professional.query.filter_by(user_id=user.id).first()
+    # print(professional)
 
-    print(professional.is_verified)
-    print(professional.is_flagged)
+    # print(professional.is_verified)
+    # print(professional.is_flagged)
     
-    if professional.is_verified:
-        return redirect(url_for('prof_db'))
-    if professional.is_flagged:
-        return render_template('test.html')
-    if not professional.is_verified:
-        return render_template('verify_prof.html')
+    # if professional.is_verified:
+    #     return redirect(url_for('prof_db'))
+    # if professional.is_flagged:
+    #     return render_template('test.html')
+    # if not professional.is_verified:
+    #     return render_template('verify_prof.html')
     
 
 

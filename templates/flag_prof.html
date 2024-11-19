@@ -1,13 +1,12 @@
 {% extends 'layout.html' %}
 {% block title %}
-Under Verification Professional
+Flagged Professional
 {% endblock %}
 {% block content %}
 <div class="container mt-1">
     <h1 class="display-1">Welcome {{professional.name}}</h1>
-
-    <h2 class="display-4">Your account is under verification</h2>
-    <h5>Wait for Admin Approval.</h5>
+    <h2 class="display-4">Your account is flagged</h2>
+    <h5>You will be connected shortly!</h5>
     <a href="/signout" class="btn btn-danger btn-lg">EXIT</a>
 </div>
 {% endblock %}
