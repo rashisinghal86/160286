@@ -23,7 +23,7 @@
                             <td>{{ schedule.location }}</td>
                             <td>{{ schedule.schedule_datetime }}</td>
                             <td>
-                                <form action="{{ url_for('confirm')}}" method="post">
+                                <form action="{{ url_for('confirm', id=schedule.id)}}" method="post">
                                     <button class="btn btn-success">
                                         <i class="fas fa-check"></i>
                                         Accept
@@ -34,18 +34,7 @@
                     {% endif %}
                 {% endfor %}
             </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="6">
-                        <form action="#" method="post">
-                            <button class="btn btn-success">
-                                <i class="fas fa-check"></i>
-                                Accept
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            </tfoot>
+           
         </table>
     </div>
 {% endblock %}

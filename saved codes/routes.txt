@@ -111,7 +111,32 @@ def add_to_booking(service_id):
 
 
 
+confirm 
+if role_id == 3:
+        schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+        if not schedules:
+            flash('No schedules to confirm')
+            return redirect(url_for('schedule'))
+        transaction = Transaction(customer_id=session['user_id'], amount=0, datetime=datetime.now(), status='Pending')
+    
+        for schedule in schedules:
+            service = Service.query.get(schedule.service_id)
+            transaction.amount += float(service.price)
+            
+            booking = Booking(transaction=transaction,
+                              service=schedule.service,
+                              location=schedule.location,
+                              date_of_completion=schedule.schedule_datetime.date(),
+                              rating=None,
+                              remarks=None)
+            db.session.add(booking)
+            db.session.delete(schedule)
+        transaction.status = 'Waiting for professional confirmation'
+        db.session.add(transaction)
+        db.session.commit()
 
+        flash('Booking confirmed successfully')
+        return redirect(url_for('bookings'))
 
 
 

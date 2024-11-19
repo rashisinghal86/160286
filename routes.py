@@ -951,72 +951,67 @@ def delete_schedule(id):
     return redirect(url_for('schedule'))
     
 
-@app.route('/confirm', methods=['POST'])
+@app.route('/schedule/<int:id>/confirm', methods=['POST'])
 @auth_reqd
-def confirm():
+def confirm(id):
     user = User.query.get(session['user_id'])
     role_id = user.role_id
-    if role_id == 3:
-        schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
-        if not schedules:
-            flash('No schedules to confirm')
-            return redirect(url_for('schedule'))
-        transaction = Transaction(customer_id=session['user_id'], amount=0, datetime=datetime.now(), status='Pending')
-    
-        for schedule in schedules:
-            service = Service.query.get(schedule.service_id)
-            transaction.amount += float(service.price)
-            
-            booking = Booking(transaction=transaction,
-                              service=schedule.service,
-                              location=schedule.location,
-                              date_of_completion=schedule.schedule_datetime.date(),
-                              rating=None,
-                              remarks=None)
-            db.session.add(booking)
-            db.session.delete(schedule)
-        transaction.status = 'Waiting for professional confirmation'
-        db.session.add(transaction)
-        db.session.commit()
 
-        flash('Booking confirmed successfully')
-        return redirect(url_for('bookings'))
-
-    elif role_id == 2:
+    if role_id == 2:
         professional = Professional.query.filter_by(user_id=session['user_id']).first()
         if not professional:
             flash('Professional does not exist')
             return redirect(url_for('login'))
         
-        schedules = Schedule.query.join(Service).join(Category).filter(Category.name == professional.service_type).all()
-        if not schedules:
-            flash('No schedules to accept')
-            return redirect(url_for('schedule'))
+        schedule = Schedule.query.get(id)
+        if not schedule or schedule.is_accepted:
+            flash('No pending schedule to accept')
+            return redirect(url_for('pending_booking'))
         
-        for schedule in schedules:
-            transaction = Transaction(customer_id=schedule.customer_id,professional_id=professional.id, amount=0, datetime=datetime.now(), status='Pending')
+        transaction = Transaction(customer_id=schedule.customer_id, professional_id=professional.id, amount=0, datetime=datetime.now(), status='Accepted')
+        service = Service.query.get(schedule.service_id)
+        transaction.amount += float(service.price)
 
-            service = Service.query.get(schedule.service_id)
-            transaction.amount += float(service.price)
-
-            booking = Booking(transaction=transaction,
-                              service=schedule.service,
-                              location=schedule.location,
-                              date_of_completion=schedule.schedule_datetime.date(),
-                              rating=None,
-                              remarks=None)
-            db.session.add(booking)
-            db.session.delete(schedule)
-        transaction.status = 'Accepted'
-
+        booking = Booking(
+            transaction=transaction,
+            service=schedule.service,
+            location=schedule.location,
+            date_of_completion=schedule.schedule_datetime.date(),
+            rating=None,
+            remarks=None
+        )
+        db.session.add(booking)
+        db.session.delete(schedule)
         db.session.add(transaction)
         db.session.commit()
-        flash('Booking accepted successfully')
-        return redirect(url_for('bookings'))
 
+        flash('Schedule accepted successfully')
+        return redirect(url_for('pending_booking'))
+                            
+        # 
 
+            # if schedule.id == id:
 
+            #     transaction = Transaction(customer_id=schedule.customer_id,professional_id=professional.id, amount=0, datetime=datetime.now(), status='Pending')
 
+            #     service = Service.query.get(schedule.service_id)
+            #     transaction.amount += float(service.price)
+
+            #     booking = Booking(transaction=transaction,
+            #                     service=schedule.service,
+            #                     location=schedule.location,
+            #                     date_of_completion=schedule.schedule_datetime.date(),
+            #                     rating=None,
+            #                     remarks=None)
+
+            #     db.session.add(booking)
+            #     db.session.delete(schedule)
+            #     transaction.status = 'Accepted' #we assume payment is accepted.
+            
+            #     db.session.add(transaction)
+            #     db.session.commit()
+            #     flash('Booking accepted successfully')
+            #     return redirect(url_for('bookings'))
 
 @app.route('/bookings')
 @auth_reqd
@@ -1024,17 +1019,110 @@ def bookings():
     user = User.query.get(session['user_id'])
     role_id = user.role_id
     if role_id == 3:
-
-        transactions = Transaction.query.filter_by(customer_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
-    #bookings = Booking.query.filter_by(customer_id=session['user_id']).all()
-        return render_template('bookings1.html', transactions = transactions) 
+        cust_transactions = Transaction.query.filter_by(customer_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
+        return render_template('bookings1.html', transactions = cust_transactions) 
     elif role_id == 2:        
-        transactions = Transaction.query.filter_by(professional_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
-        return render_template('bookings1.html', transactions = transactions)
+        prof_transactions = Transaction.query.filter_by(professional_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
+        print(prof_transactions)
+        return render_template('prof_booking.html', transactions = prof_transactions)
     else:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))
     
+
+@app.route('/booking/<int:id>/delete', methods=['POST'])
+@auth_reqd
+def delete_booking(id):
+    user = User.query.get(session['user_id'])
+    role_id = user.role_id
+    if role_id != 3:
+        flash('You are not authorized to access this page')
+        return redirect(url_for('home'))
+    booking = Booking.query.get(id)
+    if booking.transaction.customer_id != session['user_id']:
+        flash('You do not have permission to delete this booking')
+        return redirect(url_for('bookings'))
+    if booking.transaction.status == 'Accepted':
+        flash('You cannot delete an accepted booking')
+        return redirect(url_for('bookings'))
+    if booking.transaction.status == 'Cancelled':
+        flash('Booking already cancelled')
+        return redirect(url_for('bookings'))
+    if booking.transaction.status == 'Completed':
+        flash('Booking already completed')
+        return redirect(url_for('bookings'))
+    booking.transaction.status = 'Cancelled'
+    db.session.commit()
+
+    flash('Booking cancelled successfully')
+    return redirect(url_for('bookings'))
+
+
+@app.route('/booking/<int:id>/complete', methods=['POST'])
+@auth_reqd
+def complete_booking(id):
+    user = User.query.get(session['user_id'])
+    role_id = user.role_id
+    if role_id != 3:
+        flash('You are not authorized to access this page')
+        return redirect(url_for('home'))
+    booking = Booking.query.get(id)
+    if booking.transaction.customer_id != session['user_id']:
+        flash('You do not have permission to complete this booking')
+        return redirect(url_for('bookings'))
+    
+    if booking.transaction.status == 'Cancelled':
+        flash('Booking already cancelled')
+        return redirect(url_for('bookings'))
+    if booking.transaction.status == 'Completed':
+        flash('Booking already completed')
+        return redirect(url_for('bookings'))
+    
+    booking.transaction.date_of_completion = datetime.now()
+    booking.transaction.status = 'Completed'
+    db.session.commit()
+
+    flash('Booking completed successfully')
+    
+    return redirect(url_for('bookings'))
+
+
+@app.route('/booking/<int:id>/rate', methods=['POST'])
+@auth_reqd
+def rate_booking(id):
+    user = User.query.get(session['user_id'])
+    role_id = user.role_id
+    if role_id != 3:
+        flash('You are not authorized to access this page')
+        return redirect(url_for('home'))
+    transaction = Transaction.query.get(id)
+    if transaction.customer_id != session['user_id']:
+        flash('You do not have permission to rate this booking')
+        return redirect(url_for('bookings'))
+    if transaction.status != 'Completed':
+        flash('You cannot rate a booking that is not completed')
+        return redirect(url_for('bookings'))
+    rating = request.form.get('rating')
+    remarks = request.form.get('remarks')
+    if not rating or not remarks:
+        flash('Please fill out the fields')
+        return redirect(url_for('bookings'))
+    try:
+        rating = int(rating)
+    except ValueError:
+        flash('Invalid rating')
+        return redirect(url_for('bookings'))
+    if rating < 1 or rating > 5:
+        flash('Rating must be between 1 and 5')
+        return redirect(url_for('bookings'))
+    booking = Booking.query.filter_by(transaction_id=id).first()
+    booking.rating = rating
+    booking.remarks = remarks
+    db.session.commit()
+    flash('Booking rated successfully')
+    return redirect(url_for('bookings'))
+
+#-----------------professional pages-----------------------------------
     
 # ----booking request to professional-------------------   
 @app.route('/pending_booking')
@@ -1075,51 +1163,6 @@ def accept_appointment(id):
     db.session.delete(schedule)
     #delete from prof table
     flash('Schedule accepted successfully')
-#route for cancel appointment
 
-#route for cancel appointment
-@app.route('/cancel_appointment/<int:id>', methods=['POST'])
-@auth_reqd
-def cancel_appointment(id):
-    schedule = Schedule.query.get(id)
-    if not schedule:
-        flash('Schedule does not exist')
-        return redirect(url_for('pending_booking'))
-    if schedule.is_accepted:
-        flash('You cannot cancel an accepted schedule')
-        return redirect(url_for('pending_booking'))
-    if schedule.is_cancelled:
-        flash('Schedule already cancelled')
-        return redirect(url_for('pending_booking'))
-    if schedule.is_completed:
-        flash('Schedule already completed')
-        return redirect(url_for('pending_booking'))
-    db.session.delete(schedule)
-    db.session.commit()
-    flash('Schedule cancelled successfully')
-
-    return redirect(url_for('pending_booking'))
-
-#route for complete appointment
-@app.route('/complete_appointment/<int:id>', methods=['POST'])
-@auth_reqd
-def complete_appointment(id):
-    schedule = Schedule.query.get(id)
-    if not schedule:
-        flash('Schedule does not exist')
-        return redirect(url_for('pending_booking'))
-    if schedule.is_accepted:
-        flash('You cannot complete an accepted schedule')
-        return redirect(url_for('pending_booking'))
-    if schedule.is_cancelled:
-        flash('Schedule already cancelled')
-        return redirect(url_for('pending_booking'))
-    if schedule.is_completed:
-        flash('Schedule already completed')
-        return redirect(url_for('pending_booking'))
-    schedule.is_completed = True
-    db.session.commit()
-    flash('Schedule completed successfully')
-    return redirect(url_for('pending_booking'))
 
 
