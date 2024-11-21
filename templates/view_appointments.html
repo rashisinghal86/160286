@@ -1,40 +1,49 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <h1 class="display-1">Schedule Appointments</h1>
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Appointment</th>
-                    <th>Service</th>
-                    <th>Price</th>
-                    <th>Location</th>
-                    <th>Scheduled Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for schedule in schedules %}
-                    {% if schedule.is_active == True or schedule.is_pending == True %}
-                        <tr>
-                            <td>{{ schedule.id }}</td>
-                            <td>{{ schedule.service.name }}</td>
-                            <td>{{ schedule.service.price }}</td>
-                            <td>{{ schedule.location }}</td>
-                            <td>{{ schedule.schedule_datetime }}</td>
-                            <td>
-                                <form action="{{ url_for('confirm', id=schedule.id)}}" method="post">
-                                    <button class="btn btn-success">
-                                        <i class="fas fa-check"></i>
-                                        Accept
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-           
-        </table>
+    <h1 class="display-1">Service Requests</h1>
+    <hr>
+    {% if schedules|length > 0 %}
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Appointment</th>
+                        <th>Service</th>
+                        <th>Price</th>
+                        <th>Location</th>
+                        <th>Scheduled Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in schedules %}
+                        {% if schedule.is_active == True or schedule.is_pending == True %}
+                            <tr>
+                                <td>{{ schedule.id }}</td>
+                                <td>{{ schedule.service.name }}</td>
+                                <td>{{ schedule.service.price }}</td>
+                                <td>{{ schedule.location }}</td>
+                                <td>{{ schedule.schedule_datetime }}</td>
+                                <td>
+                                    <form action="{{ url_for('confirm', id=schedule.id)}}" method="post">
+                                        <button class="btn btn-success">
+                                            <i class="fas fa-check"></i>
+                                            Accept
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            
+            </table>
+    {%else%}
+    <div class="alert alert-warning">
+        <h4 class="alert-heading">No schedule found</h4>
+        <p>There is no schedule found in the database. Please wait for Service Requests </p>
+        
     </div>
+{%endif%}
+        
 {% endblock %}

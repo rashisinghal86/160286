@@ -1053,7 +1053,7 @@ def delete_schedule(id):
     
     db.session.delete(schedule)
     db.session.commit()
-    flash('Schedule deleted successfully')
+    flash('Schedule deleted successfully, Create new one')
     return redirect(url_for('schedule'))
     
 
