@@ -587,6 +587,7 @@ def profile_post():
         professional.contact = request.form.get('contact') or professional.contact
         professional.location = request.form.get('location') or professional.location
         professional.experience = request.form.get('experience') or professional.experience
+        professional.service_type = professional.service_type
 
         if not username or not cpassword or not password:
             flash('Please fill out the fields')
@@ -611,7 +612,7 @@ def profile_post():
         professional.email = professional.email
         professional.contact = professional.contact
         professional.location = professional.location
-        
+        professional.service_type = professional.service_type
         professional.experience = professional.experience
 
 
