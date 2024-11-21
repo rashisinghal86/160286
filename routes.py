@@ -473,14 +473,7 @@ def block_customer(id):
 @app.route('/prof_db')
 def prof_db():
     prof_name = request.args.get('username') or ''
-    #you can use the username to search for the professional in the database and show request accordingly in html according to their location.
-    # check for proff in session, and fetch active request accepted by professional
-    # pass it into render tempalate and show in html page.
-    # [].
-    #open_requests = Schedule.query.filter_by(is_pending=True).all()
-    # accepted_requests = Booking.query.filter_by(is_accepted=True).all()
-    # print(open_requests)
-
+    
     return render_template('prof_db.html', prof_name=prof_name)
     
 
