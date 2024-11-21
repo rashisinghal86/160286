@@ -1,0 +1,112 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Admin Overview
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="display-4">Admin Overview</h1>
+    <hr>
+
+    <h2>Customers</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>Customer Name</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.id }}</td>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.location }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Professionals</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Professional ID</th>
+                <th>Professional Name</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for professional in professionals %}
+            <tr>
+                <td>{{ professional.id }}</td>
+                <td>{{ professional.name }}</td>
+                <td>{{ professional.location }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Schedules in_waiting</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Schedule ID</th>
+                <th>Service Name</th>
+                <th>Price</th>
+                <th>Location</th>
+                <th>Schedule Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.id }}</td>
+                <td>{{ schedule.service.name }}</td>
+                <td>{{ schedule.service.price }}</td>
+                <td>{{ schedule.location }}</td>
+                <td>{{ schedule.schedule_datetime }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Bookings</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Service Name</th>
+                <th>Location</th>
+                <th>Customer ID</th>
+                <th>Professional ID</th>
+
+                <th>Transaction Amount</th>
+                <th>Transaction Status</th>
+                <th>Ratings</th>
+                <th>Reviews</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                {% for booking in transaction.bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.service.name }}</td>
+                    <td>{{ booking.location }}</td>
+                    <td>{{ transaction.customer_id }}</td>
+                    <td>{{ transaction.professional_id }}</td>
+    
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.status }}</td>
+                    <td>{{ booking.rating}}</td>
+                    <td>{{ booking.review }}</td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

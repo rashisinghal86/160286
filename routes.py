@@ -1257,5 +1257,18 @@ def accept_appointment(id):
     #delete from prof table
     flash('Schedule accepted successfully')
 
-
+# ----------------admin page route to fetch all bookings by customers-------------------
+@app.route('/admin/bookings')
+@admin_reqd
+def admin_bookings():
+    users = User.query.all()
+    schedules = Schedule.query.all()
+    
+    transactions = Transaction.query.all()
+    
+    bookings = Booking.query.all()
+    customers = Customer.query.all()
+    professionals = Professional.query.all()
+    
+    return render_template('admin_booking.html', bookings=bookings, schedules=schedules, transactions=transactions, customers=customers, professionals=professionals,users=users)
 
