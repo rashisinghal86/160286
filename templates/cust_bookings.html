@@ -1,6 +1,11 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h2 class="display-1">Customer Bookings</h2>
+<button class="btn btn-primary" onClick="window.print()" style="float: right;">
+    <i class="fas fa-print" aria-hidden="true"></i>
+    Print
+</button>
+<br>
 <hr>
 {% if transactions|length > 0 %}
     {% for transaction in transactions %}

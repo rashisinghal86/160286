@@ -94,7 +94,8 @@ def home():
 #--1. registering a user-----------------------------------
 @app.route('/register')
 def register():
-    role = Role.query.all()
+    # role = Role.query.all()
+    role= Role.query.filter(Role.name.in_(['Professional', 'Customer'])).all()
     
     return render_template('register.html', role=role)
 
@@ -196,10 +197,9 @@ def login_post():
         
     elif role.name == 'Customer':
         customer = Customer.query.filter_by(user_id=user.id).first()
-        if customer.is_blocked:
-            return render_template('block_cust.html', customer=customer)
         if customer:
-            #return ('already registered customer page')
+            if customer.is_blocked:
+                return render_template('block_cust.html', customer=customer)
             return redirect(url_for('cust_db', username=customer.users.username))
         else:
             return redirect(url_for('register_cdb'))
