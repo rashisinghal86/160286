@@ -989,7 +989,7 @@ def add_to_schedule(service_id):
     db.session.commit()
      
     flash('Service added to schedule successfully')
-    return redirect(url_for('catalogue'))
+    return redirect(url_for('schedule'))
 
 
 
