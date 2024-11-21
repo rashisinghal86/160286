@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2 class="display-1">Customer Bookings</h2>
+<hr>
+{% if transactions|length > 0 %}
+    {% for transaction in transactions %}
+        <div class="heading">
+            <h2 class="text-muted">Transaction # {{transaction.id}}</h2>
+            <p class="datetime">{{transaction.datetime.strftime('%A, %d %b %Y, %I:%M %p')}}</p>
+        </div>
+        <div class="bookings">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service Name</th>
+                        <th>Date of Completion</th>
+                        <th>Location</th>
+                        <th>Amount</th>
+                        <th>Rating</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in transaction.bookings %}
+                        <tr>
+                            <td>{{booking.id}}</td>
+                            <td>{{booking.service.name}}</td>
+                            <td>{{booking.date_of_completion}}</td>
+                            <td>{{booking.location}}</td>
+                            <td>{{booking.transaction.amount}}</td>
+                            <td>
+                                <input type="number" name="rating" placeholder="enter rating">
+                            </td>
+
+                            <td>
+                                <input type="String" name="remarks" placeholder="enter remarks">    
+
+                            </td>
+                            <td>{{booking.transaction.status}}</td>
+
+                            <td>
+                            <form action="{{url_for('delete_booking', id=booking.id)}}" method="post">
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    cancle
+                                </button>
+                            </form>
+                            </td>
+                            <td>
+                            <form action="{{url_for('complete_booking', id=booking.id)}}" method="post">
+                                <button class="btn btn-success">
+                                    <i class="fas fa-check"></i>
+                                    Complete
+                                </button>
+                            </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">
+        <strong>Info!</strong> No bookings found
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block style %}
+<style>
+    .heading {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .datetime {
+        font-size: 1rem;
+        font-weight: 300;
+    }
+    .bookings {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 20px;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+</style>
+{% endblock %}
+
+<!-- {% block script %}
+<script>
+    console.log('Orders Page');
+</script>
+{% endblock %} -->

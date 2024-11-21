@@ -17,8 +17,6 @@
                         <th>Date of Completion</th>
                         <th>Location</th>
                         <th>Amount</th>
-                        <th>Rating</th>
-                        <th>Remarks</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -30,32 +28,17 @@
                             <td>{{booking.date_of_completion}}</td>
                             <td>{{booking.location}}</td>
                             <td>{{booking.transaction.amount}}</td>
-                            <td>
-                                <input type="number" name="rating" placeholder="enter rating">
-                            </td>
-
-                            <td>
-                                <input type="String" name="remarks" placeholder="enter remarks">    
-
-                            </td>
                             <td>{{booking.transaction.status}}</td>
+                            <td>
+                                <input type="hidden" name="rating" placeholder="enter rating">
+                            </td>
 
                             <td>
-                            <form action="{{url_for('delete_booking', id=booking.id)}}" method="post">
-                                <button class="btn btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                    cancle
-                                </button>
-                            </form>
+                                <input type="hidden" name="remarks" placeholder="enter remarks">    
+
                             </td>
-                            <td>
-                            <form action="{{url_for('complete_booking', id=booking.id)}}" method="post">
-                                <button class="btn btn-success">
-                                    <i class="fas fa-check"></i>
-                                    Complete
-                                </button>
-                            </form>
-                            </td>
+
+                            
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -64,7 +47,7 @@
     {% endfor %}
 {% else %}
     <div class="alert alert-info">
-        <strong>Info!</strong> No Orders found
+        <strong>Info!</strong> No Appointments found
     </div>
 {% endif %}
 {% endblock %}
@@ -96,4 +79,3 @@
     console.log('Orders Page');
 </script>
 {% endblock %} -->
-

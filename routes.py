@@ -141,14 +141,13 @@ def login_post():
     username = request.form['username']
     password = request.form['password']
 
-
     if not username or not password:
         flash("please enter all the fields")
         return redirect(url_for('login'))
     
     user = User.query.filter_by(username=username).first()
     if not user:
-        flash('You are not registered, Register to login')
+        flash('You are not registered, Register ^ to login')
         return redirect(url_for('login'))
     
     
@@ -171,13 +170,12 @@ def login_post():
         else:
             return redirect(url_for('register_adb'))
  
-    
-
     elif role.name == 'Professional':
         professional = Professional.query.filter_by(user_id=user.id).first()
         print(professional)
         print(professional)
         print(professional)
+
 
         if not professional:
             return redirect(url_for('register_pdb'))
@@ -186,6 +184,7 @@ def login_post():
                 return render_template('flag_prof.html', professional=professional)
 
         if professional and professional.is_verified:
+            print(professional,'hi')
             
             #return ('already registered professional page')
             return redirect(url_for('prof_db', username=professional.users.username))
@@ -284,21 +283,28 @@ def register_pdb_post():
     
     #Check if professional-specific details are already provided  
     flash('professional registered successfully')
-    return redirect(url_for('prof_db'))
-    # user = User.query.get(session['user_id'])
-    # professional = Professional.query.filter_by(user_id=user.id).first()
-    # print(professional)
+    # return redirect(url_for('prof_db'))
+    professional = Professional.query.filter_by(user_id=user.id).first()
+    print(professional)
+    print(professional)
+    print(professional)
 
-    # print(professional.is_verified)
-    # print(professional.is_flagged)
-    
-    # if professional.is_verified:
-    #     return redirect(url_for('prof_db'))
-    # if professional.is_flagged:
-    #     return render_template('test.html')
-    # if not professional.is_verified:
-    #     return render_template('verify_prof.html')
-    
+
+    if not professional:
+        return redirect(url_for('register_pdb'))
+    if professional.is_flagged:
+            professional = Professional.query.filter_by(user_id=user.id).first()
+            return render_template('flag_prof.html', professional=professional)
+
+    if professional and professional.is_verified:
+        print(professional,'hi')
+        
+        #return ('already registered professional page')
+        return redirect(url_for('prof_db', username=professional.users.username))
+    if professional and not professional.is_verified:
+        professional = Professional.query.filter_by(user_id=user.id).first()
+        return render_template('verify_prof.html',professional=professional)
+        
 
 
 @app.route('/admin/professionals')
@@ -522,16 +528,19 @@ def profile():
     elif role.name == 'Customer':
         customer = Customer.query.filter_by(user_id=user.id).first()
         return render_template('profile_cust.html', user=user, customer=customer)
-    return render_template('profile.html', user=user)
-   
+    flash('Unexpected role. Please contact support.')
+    return redirect(url_for('home')) 
+
 @app.route('/profile', methods=['POST'])
 @auth_reqd
 def profile_post():
     # if user is admin, redirect to profile_admin page
     user = User.query.get(session['user_id'])
     role = Role.query.get(user.role_id)
-    admin = Admin.query.filter_by(user_id=user.id).first()
+    
     if role.name == 'Admin':
+        
+        admin = Admin.query.filter_by(user_id=user.id).first()
         username=request.form.get('username')
         cpassword=request.form.get('cpassword')
         password=request.form.get('password')
@@ -560,8 +569,111 @@ def profile_post():
 
         db.session.commit()
         flash('Profile updated successfully')
-        return redirect(url_for('profile'))
+        return redirect(url_for('home'))
+    
+    
+    elif role.name == 'Professional':
+        
+        professional = Professional.query.filter_by(user_id=user.id).first()
+        if not professional:
+            flash('Professional profile not found')
+            return redirect(url_for('profile'))
 
+        username=request.form.get('username')
+        cpassword=request.form.get('cpassword')
+        password=request.form.get('password')
+        professional.email = request.form.get('email') or professional.email
+        professional.name = request.form.get('name') or professional.name
+        professional.contact = request.form.get('contact') or professional.contact
+        professional.location = request.form.get('location') or professional.location
+        professional.experience = request.form.get('experience') or professional.experience
+
+        if not username or not cpassword or not password:
+            flash('Please fill out the fields')
+            return redirect(url_for('profile'))
+        
+        #check if current password entered to update is correct
+        #user = User.query.get(session['user_id'])
+        if not check_password_hash(user.passhash, cpassword):
+            flash('Incorrect current password')
+            return redirect(url_for('profile'))
+        #check if new username id available
+        if username != user.username:
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                flash('Username already exists')
+                return redirect(url_for('profile'))   
+
+        new_password_hash = generate_password_hash(password)
+        user.username = username
+        user.passhash = new_password_hash
+        user.name = professional.name
+        professional.email = professional.email
+        professional.contact = professional.contact
+        professional.location = professional.location
+        
+        professional.experience = professional.experience
+
+
+        db.session.commit()
+        flash('Profile updated successfully')
+        return redirect(url_for('home'))
+    
+    
+
+    elif role.name == 'Customer':
+        
+        customer = Customer.query.filter_by(user_id=user.id).first()
+        if not customer:
+            flash('Customer profile not found')
+            return redirect(url_for('profile'))
+
+        username=request.form.get('username')
+        cpassword=request.form.get('cpassword')
+        password=request.form.get('password')
+        customer.email = request.form.get('email') or customer.email
+        customer.name = request.form.get('name') or customer.name
+        customer.contact = request.form.get('contact') or customer.contact
+        customer.location = request.form.get('location') or customer.location
+
+        if not username or not cpassword or not password:
+            flash('Please fill out the fields')
+            return redirect(url_for('profile'))
+        
+        #check if current password entered to update is correct
+        #user = User.query.get(session['user_id'])
+        if not check_password_hash(user.passhash, cpassword):
+            flash('Incorrect current password')
+            return redirect(url_for('profile'))
+        #check if new username id available
+        if username != user.username:
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                flash('Username already exists')
+                return redirect(url_for('profile'))   
+
+        new_password_hash = generate_password_hash(password)
+        user.username = username
+        user.passhash = new_password_hash
+        user.name = customer.name
+        customer.email = customer.email
+        customer.contact = customer.contact
+        customer.location = customer.location
+    
+
+        db.session.commit()
+        flash('Profile updated successfully')
+        return redirect(url_for('home'))
+    
+    flash('Unexpected role. Please contact support.')
+    return redirect(url_for('home'))
+
+
+
+
+
+
+    
 #-------admin pages-----------------------------------
 @app.route('/admin_db')
 @admin_reqd
@@ -601,7 +713,7 @@ def add_category_post():
     db.session.add(category)
     db.session.commit()
     flash("Category added successfully")
-    return redirect(url_for('admin_db'))
+    return redirect(url_for('add_category'))
 
 @app.route('/category/<int:id>/')
 @admin_reqd
@@ -986,49 +1098,30 @@ def confirm(id):
         db.session.commit()
 
         flash('Schedule accepted successfully')
-        return redirect(url_for('pending_booking'))
+        # return redirect(url_for('pending_booking'))
+        return render_template('prof_booking.html',transactions=Transaction.query.filter_by(professional_id=professional.id).all())
                             
-        # 
-
-            # if schedule.id == id:
-
-            #     transaction = Transaction(customer_id=schedule.customer_id,professional_id=professional.id, amount=0, datetime=datetime.now(), status='Pending')
-
-            #     service = Service.query.get(schedule.service_id)
-            #     transaction.amount += float(service.price)
-
-            #     booking = Booking(transaction=transaction,
-            #                     service=schedule.service,
-            #                     location=schedule.location,
-            #                     date_of_completion=schedule.schedule_datetime.date(),
-            #                     rating=None,
-            #                     remarks=None)
-
-            #     db.session.add(booking)
-            #     db.session.delete(schedule)
-            #     transaction.status = 'Accepted' #we assume payment is accepted.
-            
-            #     db.session.add(transaction)
-            #     db.session.commit()
-            #     flash('Booking accepted successfully')
-            #     return redirect(url_for('bookings'))
-
 @app.route('/bookings')
 @auth_reqd
 def bookings():
     user = User.query.get(session['user_id'])
     role_id = user.role_id
-    if role_id == 3:
+
+    if role_id == 3:  # Customer
         cust_transactions = Transaction.query.filter_by(customer_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
-        return render_template('bookings1.html', transactions = cust_transactions) 
-    elif role_id == 2:        
-        prof_transactions = Transaction.query.filter_by(professional_id=session['user_id']).order_by(Transaction.datetime.desc()).all()
+        return render_template('cust_bookings.html', transactions=cust_transactions)
+    elif role_id == 2:  # Professional
+        professional = Professional.query.filter_by(user_id=session['user_id']).first()
+        if not professional:
+            flash('Professional does not exist')
+            return redirect(url_for('login'))
+        
+        prof_transactions = Transaction.query.filter_by(professional_id=professional.id).order_by(Transaction.datetime.desc()).all()
         print(prof_transactions)
-        return render_template('prof_booking.html', transactions = prof_transactions)
+        return render_template('prof_booking.html', transactions=prof_transactions)
     else:
         flash('You are not authorized to access this page')
-        return redirect(url_for('home'))
-    
+        return redirect(url_for('home'))    
 
 @app.route('/booking/<int:id>/delete', methods=['POST'])
 @auth_reqd
