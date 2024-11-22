@@ -86,7 +86,8 @@ def home():
         customer = Customer.query.filter_by(user_id=user.id).first()
         if customer:
             return redirect(url_for('cust_db', username=customer.users.username))
-    return render_template('home.html', user=user)
+    else:
+        return render_template('home.html', user=user)
     
    
 
@@ -473,6 +474,7 @@ def block_customer(id):
 @app.route('/prof_db')
 def prof_db():
     prof_name = request.args.get('username') or ''
+    
     
     return render_template('prof_db.html', prof_name=prof_name)
     
@@ -903,7 +905,8 @@ def delete_service_post(id):
 # -----------user-pages-----------------------------------
 @app.route('/cust_db')
 def cust_db():
-    return render_template('cust_db.html')
+    cust_name = request.args.get('username') or ''
+    return render_template('cust_db.html', cust_name=cust_name)
 
 @app.route('/catalogue')
 @auth_reqd
@@ -1113,6 +1116,17 @@ def bookings():
         prof_transactions = Transaction.query.filter_by(professional_id=professional.id).order_by(Transaction.datetime.desc()).all()
         print(prof_transactions)
         return render_template('prof_booking.html', transactions=prof_transactions)
+    elif role_id == 1:  # Admin
+        transactions = Transaction.query.all()
+        users = User.query.all()
+        schedules = Schedule.query.all()    
+        transactions = Transaction.query.all()
+        bookings = Booking.query.all()
+        customers = Customer.query.all()
+        professionals = Professional.query.all()
+    
+        return render_template('admin_booking.html', bookings=bookings, schedules=schedules, transactions=transactions, customers=customers, professionals=professionals,users=users)
+
     else:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))    

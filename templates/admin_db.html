@@ -1,54 +1,115 @@
 {% extends 'layout.html' %}
 {% block title %}
 Admin dashboard
-
 {% endblock %}
 {% block content %}
-<h1 class="display">Admin dashboard</h1>
+<div class="container mt-4">
+  <h1 class="display-4">Admin dashboard</h1>
+  <div class="profile-pic">
+    <img src="https://api.dicebear.com/9.x/bottts/svg?seed= Webmaster" width="100" alt="avatar">
+  </div>
+  <h3 class="text-muted">Welcome, Webmaster </h3>
+    <hr>
+    <h4>What would you like to do?</h4>
+    <div class="row">
+      <div class="col-md-2 mb-2">
+          <div class="card" style="width: 100%;">
+              <img src="https://api.dicebear.com/9.x/initials/svg?seed=Profile" class="card-img-top" alt="avatar">
+              <div class="card-body">
+                  <h5 class="card-title">My Profile</h5>
+                  <p class="card-text">Edit Profile | Change Password</p>
+                  <a href="{{ url_for('profile') }}" class="btn btn-primary stretched-link">Go To Profile</a>
+                </div>
+            </div>
+        </div>
 
-<a href="{{url_for('add_category')}}" class="btn btn-success">
-    <i class="fa-sharp-duotone fa-solid fa-house-user"></i>
+        <div class="col-md-2 mb-2">
+          <div class="card" style="width: 100%;">
+              <img src="https://api.dicebear.com/9.x/initials/svg?seed=Service Management" class="card-img-top" alt="avatar">
+              <div class="card-body">
+                  <h5 class="card-title">Service Management</h5>
+                  <p class="card-text">Click here to add category of services and sub categories of packages in each service</p>
+                  <a href="{{url_for('add_category')}}" class="btn btn-success">
+                  <i class="fa-sharp-duotone fa-solid fa-user-tie"></i>
     Service Management</a>
+  </div>
+</div>
+</div>
+
+<div class="col-md-2 mb-2">
+  <div class="card" style="width: 100%;">
+      <img src="https://api.dicebear.com/9.x/initials/svg?seed=Professionals Management" class="card-img-top" alt="avatar">
+      <div class="card-body">
+          <h5 class="card-title">Professionals Management</h5>
+          <p class="card-text">Click here to verify new professionals and overview the professionals activities on the platform</p>
+          <a href="{{url_for('pending_professionals')}}" class="btn btn-success">
+          <i class="fa-sharp-duotone fa-solid fa-house-user"></i>
+          Professionals Management</a>
+</div>
+</div>
+</div>
 
 
-<a href="{{url_for('pending_professionals')}}" class="btn btn-primary">
-    <i class="fa-solid fa-user-tie"></i>
-    Professionals Management</a>
+<div class="col-md-2 mb-2">
+  <div class="card" style="width: 100%;">
+      <img src="https://api.dicebear.com/9.x/initials/svg?seed= Client Management" class="card-img-top" alt="avatar">
+      <div class="card-body">
+          <h5 class="card-title"> Client Management </h5>
+          <p class="card-text">Click here to monitor customers on the platform</p>
+          <a href="{{url_for('manage_customers')}}" class="btn btn-success">
+          <i class="fa-sharp-duotone fa-solid fa-users"></i>
+          Client Management</a>
+</div>
+</div>
+</div>
 
     
-<a href="{{url_for('manage_customers')}}" class="btn btn-primary">
-  <i class="fa-solid fa-users"></i>
-  Client Management</a>
+<div class="col-md-2 mb-2">
+  <div class="card" style="width: 100%;">
+      <img src="https://api.dicebear.com/9.x/initials/svg?seed= Overview" class="card-img-top" alt="avatar">
+      <div class="card-body">
+          <h5 class="card-title"> Overview </h5>
+          <p class="card-text">Click here to monitor all activities on the platform</p>
+          <a href="{{url_for('admin_bookings')}}" class="btn btn-primary">
+            <i class="fa-solid fa-calendar"></i>
+              Overview</a>
+            </div>
+          </div>
+          </div>
 
-<a href="{{url_for('admin_bookings')}}" class="btn btn-primary">
-    <i class="fa-solid fa-calendar"></i>
-    Bookings</a>
-
-
-  
-
-
-
-   
-
+          <div class="col-md-2 mb-2">
+            <div class="card" style="width: 100%;">
+                <img src="https://api.dicebear.com/9.x/initials/svg?seed= Catalogue" class="card-img-top" alt="avatar">
+                <div class="card-body">
+                    <h5 class="card-title"> Catalogue</h5>
+                    <p class="card-text">Click here to view all services offered on the platform</p>
+                    
+                    <a href="{{ url_for('catalogue') }}" class="btn btn-primary">
+                      <i class="fa fa-book"></i> Go to Catalogue
+                  </a>
+                </div>
+                </div>
+                </div>
 
 <hr>
-<h2 class="display-2">Summary:</h2>
-<div class="chart-container">
-<div>
-  <h3>Category Chart</h3>
-  <canvas id="myChart1" width="400" height="600"></canvas>
+<hr>
+
+<h2 class="display-4" style="text-align: center; font-weight: bold;">Graphical Overview:</h2>
+<div class="chart-container mt-4">
+<div class="row">
+<div class="col-md-4 mb-4">
+  <h3>Services Summary </h3>
+  <canvas id="myChart1" width="600" height="600"></canvas>
 </div>
 
-<div>
-  <h3>Professional Status Chart</h3>
-  <canvas id="myChart2" width="400" height="600"></canvas>
+<div class="col-md-4 mb-4">
+  <h3>Professional Status Summary</h3>
+  <canvas id="myChart2" width="600" height="600"></canvas>
 </div>
+<div class="col-md-4 mb-4">
+  <h3>Client Status Summary </h3>
+  <canvas id="myChart3" width="600" height="600"></canvas>
 </div>
-
-<div>
-  <h3>Customer Status Chart</h3>
-  <canvas id="myChart3" width="400" height="600"></canvas>
 </div>
 
 {% endblock %}
@@ -85,7 +146,7 @@ Admin dashboard
     data: {
       labels: ['Pending', 'Blocked', 'Approved'],
       datasets: [{
-        label: '# of professionals',
+        label: 'No.of professionals',
         data: {{ [pending_professionals[0], blocked_professionals[0], approved_professionals[0]]|tojson }},
         borderWidth: 1
       }]
@@ -103,7 +164,7 @@ Admin dashboard
     data: {
       labels: ['Blocked', 'Unblocked'],
       datasets: [{
-        label: '# of customers',
+        label: 'No. of customers',
         data: {{ [blocked_customers[0], unblocked_customers[0]]|tojson }},
         borderWidth: 1
       }]
@@ -122,12 +183,30 @@ Admin dashboard
   .chart-container {
     
     display: grid;
-    justify-content: center;
+    justify-content:space-evenly;
     margin: 20px;
+    
 
   }
-  
+  .btn {
+    margin-top: 20px;
+}
+
+    .display-4{
+        text-size-adjust: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+    }
+.profile-pic{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 </style>
 {% endblock %}
+
+
 
   
