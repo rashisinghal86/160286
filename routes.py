@@ -67,6 +67,10 @@ def blocked_check(func):
 
 #----- home page-----
 @app.route('/')
+def index():
+    return render_template('homecss.html')
+
+@app.route('/home')
 @auth_reqd
 def home():
     user = User.query.get(session['user_id'])
@@ -79,16 +83,15 @@ def home():
         if admin:
             return redirect(url_for('admin_db', username=admin.user.username))
         
-    elif role.name == 'Professional':
+    if role.name == 'Professional':
         professional = Professional.query.filter_by(user_id=user.id).first()
         if professional:
             return redirect(url_for('prof_db', username=professional.users.username))
-    elif role.name == 'Customer':
+    if role.name == 'Customer':
         customer = Customer.query.filter_by(user_id=user.id).first()
         if customer:
             return redirect(url_for('cust_db', username=customer.users.username))
-    else:
-        return render_template('home.html', user=user)
+    
     
    
 
@@ -1222,20 +1225,6 @@ def rate_booking(id):
     return redirect(url_for('bookings'))
 
 
-@app.route('/prof/rating')
-@auth_reqd
-def prof_byrating():
-    # Query completed bookings and calculate the average rating for each professional
-    ratings = db.session.query(
-        Professional.id,
-        Professional.name,
-        func.avg(Booking.rating).label('average_rating')
-    ).join(Booking, Booking.professional_id == Professional.id).filter(
-        Booking.status == 'Completed',
-        Booking.rating.isnot(None)
-    ).group_by(Professional.id).order_by(func.avg(Booking.rating).desc()).all()
-
-    return render_template('prof_byrating.html', professionals=ratings)
 #-----------------professional pages-----------------------------------
     
 # ----booking request to professional-------------------   
@@ -1292,4 +1281,20 @@ def admin_bookings():
     professionals = Professional.query.all()
     
     return render_template('admin_booking.html', bookings=bookings, schedules=schedules, transactions=transactions, customers=customers, professionals=professionals,users=users)
+
+@app.route('/prof/rating')
+@auth_reqd
+def prof_byrating():
+    users = User.query.all()
+    schedules = Schedule.query.all()
+    
+    transactions = Transaction.query.all()
+    
+    bookings = Booking.query.all()
+    customers = Customer.query.all()
+    professionals = Professional.query.all()
+    
+   
+    return render_template('prof_byrating.html' , bookings=bookings, schedules=schedules, transactions=transactions, customers=customers, professionals=professionals,users=users)
+
 

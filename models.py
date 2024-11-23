@@ -108,7 +108,7 @@ class Booking(db.Model):
     date_of_completion = db.Column(db.Date, nullable=False)
     rating = db.Column(db.Integer, nullable=True)
     remarks = db.Column(db.String(1024), nullable=True)
-    # professional = db.relationship('Professional', backref=db.backref('bookings', lazy=True))
+    
         
 def add_roles():
     list = ['Admin', 'Professional', 'Customer']

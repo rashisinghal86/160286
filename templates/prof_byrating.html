@@ -1,19 +1,21 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-Professionals by Rating
+Admin Overview
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="display-4">Professionals by Rating</h2>
+    <h1 class="display-4">View Listed Professional on Platform</h1>
     <hr>
+
+    <h2>Professionals</h2>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Professional ID</th>
                 <th>Professional Name</th>
-                <th>Average Rating</th>
+                <th>Location</th>
             </tr>
         </thead>
         <tbody>
@@ -21,8 +23,41 @@ Professionals by Rating
             <tr>
                 <td>{{ professional.id }}</td>
                 <td>{{ professional.name }}</td>
-                <td>{{ professional.average_rating }}</td>
+                <td>{{ professional.location }}</td>
             </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Rating & Reviews of Professionals</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                
+                <th>Service Name</th>
+                
+                
+                <th>Professional ID</th>
+
+                
+                <th>Ratings</th>
+                <th>Reviews</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                {% for booking in transaction.bookings %}
+                <tr>
+                    
+                    <td>{{ booking.service.name }}</td>
+                    
+
+                    <td>{{ transaction.professional_id }}</td>
+    
+                    <td>{{ booking.rating}}</td>
+                    <td>{{ booking.remarks }}</td>
+                </tr>
+                {% endfor %}
             {% endfor %}
         </tbody>
     </table>
