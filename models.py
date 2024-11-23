@@ -36,7 +36,7 @@ class Professional(db.Model):
     is_flagged = db.Column(db.Boolean, default=False)
     
     users = db.relationship('User', backref='professional', lazy=True)
-
+    # bookings = db.relationship('Booking', backref='professional', lazy=True)
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -44,7 +44,7 @@ class Customer(db.Model):
     email  = db.Column(db.String(80), nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
-
+# 
     users = db.relationship('User', backref='customer', lazy=True)
 
     is_blocked = db.Column(db.Boolean, default=False)
@@ -108,7 +108,7 @@ class Booking(db.Model):
     date_of_completion = db.Column(db.Date, nullable=False)
     rating = db.Column(db.Integer, nullable=True)
     remarks = db.Column(db.String(1024), nullable=True)
-    
+    # professional = db.relationship('Professional', backref=db.backref('bookings', lazy=True))
         
 def add_roles():
     list = ['Admin', 'Professional', 'Customer']

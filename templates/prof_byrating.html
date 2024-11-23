@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Professionals by Rating
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="display-4">Professionals by Rating</h2>
+    <hr>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Professional ID</th>
+                <th>Professional Name</th>
+                <th>Average Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for professional in professionals %}
+            <tr>
+                <td>{{ professional.id }}</td>
+                <td>{{ professional.name }}</td>
+                <td>{{ professional.average_rating }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

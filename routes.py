@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Role,Admin, Professional, Customer, Category, Service, Schedule, Transaction, Booking
 from datetime import datetime
 from functools import wraps
+from sqlalchemy import func
 import os
 from werkzeug.utils import secure_filename
 
@@ -1220,6 +1221,21 @@ def rate_booking(id):
     flash('Booking rated successfully')
     return redirect(url_for('bookings'))
 
+
+@app.route('/prof/rating')
+@auth_reqd
+def prof_byrating():
+    # Query completed bookings and calculate the average rating for each professional
+    ratings = db.session.query(
+        Professional.id,
+        Professional.name,
+        func.avg(Booking.rating).label('average_rating')
+    ).join(Booking, Booking.professional_id == Professional.id).filter(
+        Booking.status == 'Completed',
+        Booking.rating.isnot(None)
+    ).group_by(Professional.id).order_by(func.avg(Booking.rating).desc()).all()
+
+    return render_template('prof_byrating.html', professionals=ratings)
 #-----------------professional pages-----------------------------------
     
 # ----booking request to professional-------------------   
