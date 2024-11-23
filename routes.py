@@ -1196,7 +1196,10 @@ def rate_booking(id):
     if role_id != 3:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))
-    transaction = Transaction.query.get(id)
+    booking = Booking.query.get(id)
+    transaction = Transaction.query.get(booking.transaction_id)
+    print(booking)
+    print(transaction)
     if transaction.customer_id != session['user_id']:
         flash('You do not have permission to rate this booking')
         return redirect(url_for('bookings'))
@@ -1208,15 +1211,9 @@ def rate_booking(id):
     if not rating or not remarks:
         flash('Please fill out the fields')
         return redirect(url_for('bookings'))
-    try:
-        rating = int(rating)
-    except ValueError:
-        flash('Invalid rating')
-        return redirect(url_for('bookings'))
-    if rating < 1 or rating > 5:
-        flash('Rating must be between 1 and 5')
-        return redirect(url_for('bookings'))
-    booking = Booking.query.filter_by(transaction_id=id).first()
+    rating = int(rating)
+    print(rating, type(rating), remarks)
+   
     booking.rating = rating
     booking.remarks = remarks
     db.session.commit()

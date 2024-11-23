@@ -15,6 +15,7 @@
         </div>
         <div class="bookings">
             <table class="table">
+                {% for booking in transaction.bookings %}
                 <thead>
                     <tr>
                         <th>Booking ID</th>
@@ -22,42 +23,61 @@
                         <th>Date of Completion</th>
                         <th>Location</th>
                         <th>Amount</th>
-                        <th>Rating</th>
-                        <th>Remarks</th>
                         <th>Status</th>
+                        {%if booking.rating != None%}
+                            <th>Rating</th>
+                            <th>Remarks</th>
+                        {%endif%}
+                        
+                        
+                        
                     </tr>
                 </thead>
                 <tbody>
-                    {% for booking in transaction.bookings %}
+                    
                         <tr>
                             <td>{{booking.id}}</td>
                             <td>{{booking.service.name}}</td>
                             <td>{{booking.date_of_completion}}</td>
                             <td>{{booking.location}}</td>
                             <td>{{booking.transaction.amount}}</td>
-                            <td>
-                                <input type="number" name="rating" placeholder="enter rating">
-                            </td>
-
-                            <td>
-                                <input type="String" name="remarks" placeholder="enter remarks">    
-
-                            </td>
                             <td>{{booking.transaction.status}}</td>
+                            {%if booking.transaction.status == 'Completed'%}
+                                {%if booking.rating == None%}
+                                <form action="{{ url_for('rate_booking', id=booking.id) }}" method="post">
+                                    <td>
+                                        <input type="rating" name="rating" placeholder="Rate:5 for best" min="1" max="5">
+                                    </td>
+    
+                                    <td>
+                                        <input type="String" name="remarks" placeholder="Remarks">    
+    
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-star"></i>
+                                            Rate
+                                        </button>
+                                    </td>
+    
+                                </form>
+                                {%else%}
+                                    <td>{{booking.rating}}</td>
+                                    <td>{{booking.remarks}}</td>
+                                {%endif%}
+                            
+                                
+                            {%endif%}
 
-                            <td>
-                            <form action="{{url_for('delete_booking', id=booking.id)}}" method="post">
-                                <button class="btn btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                    cancle
-                                </button>
-                            </form>
-                            </td>
+                           
+
+                           
+                            
                             <td>
                             <form action="{{url_for('complete_booking', id=booking.id)}}" method="post">
                                 <button class="btn btn-success">
                                     <i class="fas fa-check"></i>
-                                    Complete
+                                    Mark Complete
                                 </button>
                             </form>
                             </td>
