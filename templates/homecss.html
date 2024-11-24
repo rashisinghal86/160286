@@ -9,44 +9,55 @@ Home
     </h2>
     <div class="home">
         <img src="https://api.dicebear.com/9.x/bottts/svg?seed=Platform" width="100" alt="avatar">
+        
+
     </div>
-    <h3 class="text-muted">
-        Welcome, this is a simple application that allows users to request for services such as cleaning, plumbing, electrical, etc.
-    </h3>
+    <em class="text-muted">
+        The Household Services Application is a multi-user platform designed to offer comprehensive home servicing solutions. 
+        The application serves as a bridge connecting customers with verified service professionals, managed by an admin for efficient service delivery and fraud prevention.
+        Welcome, this is a simple application that allows users to request for services such as Salon Services, Gardening, Electrical, Drivers and many more.
+    </em>
     <hr>
     <h4>What would you like to do?</h4>
     
     <div class="row">
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/glass/svg?seed=Professional Sign-in" class="card-img-top" alt="avatar">
-                <div class="card-body">
-                    <h5 class="card-title">Login</h5>
-                    <p class="card-text">Login as a Professional or Customer</p>
-                    <a href="{{ url_for('login') }}" class="btn btn-primary stretched-link">Login</a>
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h5 class="card-title text-center">Login</h5>
+                    <a href="{{ url_for('login') }}"
+                     class="btn btn-light stretched-link">
+                     <i class="fa-solid fa-sign-in-alt fa-10x" style="color: #007bff;"></i>
+
+                    
+                     <p class="card-text">Login as a Professional or Customer</p>
+                    </a>
+
                 </div>
             </div>
         </div>
         
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-4">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/glass/svg?seed=Register" class="card-img-top" alt="avatar">
-                <div class="card-body">
-                    <h5 class="card-title">Register</h5>
-                    <p class="card-text">New Users! click here</p>
-                    <a href="{{ url_for('register') }}" class="btn btn-primary stretched-link">Take me to Registration Page</a>
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h5 class="card-title text-center">Register</h5>
+                    <a href="{{ url_for('register') }}" class="btn btn-light stretched-link">
+                        <i class="fa-solid fa-user-plus fa-10x"></i>                        
+                        <p class="card-text">New Users! click here</p>
+                    </a>
+
                 </div>
             </div>
         </div>
                 
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/glass/svg?seed=Explore" class="card-img-top" alt="avatar">
-                <div class="card-body">
-                    <h5 class="card-title">Explore</h5>
-                    <p class="card-text">Know more about us.</p>
-                    <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID" class="btn btn-primary" target="_blank">
-                        <i class="fab fa-youtube"></i> Watch on YouTube
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h5 class="card-title text-center">Explore</h5>
+                    <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID"  class="btn btn-light stretched-link" target="_blank">
+                        <i class="fab fa-youtube fa-10x" style="color: #ff0000;"></i> 
+                        <p class="card-text">To Know more about us.</p>
+    
                     </a>
                 </div>
             </div>
@@ -54,7 +65,7 @@ Home
     </div>
 </div>
 
-<marquee>Built exclusively for IIT Madras Diploma in Data Science & Programming Pre-Requisite</marquee>
+<marquee>Built exclusively for IIT Madras- Diploma in Data Science & Programming Course Pre-Requisite|2024</marquee>
 
 {% endblock %}
 
