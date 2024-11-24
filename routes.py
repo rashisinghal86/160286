@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Role,Admin, Professional, Customer, Category, Service, Schedule, Transaction, Booking
 from datetime import datetime
 from functools import wraps
-from sqlalchemy import func
+
 import os
 from werkzeug.utils import secure_filename
 
@@ -1128,9 +1128,10 @@ def bookings():
         bookings = Booking.query.all()
         customers = Customer.query.all()
         professionals = Professional.query.all()
+        pending_professionals = Professional.query.filter_by(is_verified=False,is_flagged=False).all()
+        blocked_professionals = Professional.query.filter_by(is_flagged=True).all()
     
-        return render_template('admin_booking.html', bookings=bookings, schedules=schedules, transactions=transactions, customers=customers, professionals=professionals,users=users)
-
+        return render_template('admin_booking.html', bookings=bookings, schedules=schedules, transactions=transactions, customers=customers, professionals=professionals,users=users, pending_professionals=pending_professionals, blocked_professionals=blocked_professionals)
     else:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))    
