@@ -14,39 +14,49 @@ Admin dashboard
     <div class="row">
       <div class="col-md-2 mb-2">
           <div class="card" style="width: 100%;">
-              <img src="https://api.dicebear.com/9.x/initials/svg?seed=Profile" class="card-img-top" alt="avatar">
               <div class="card-body">
-                  <h5 class="card-title">My Profile</h5>
-                  <p class="card-text">Edit Profile | Change Password</p>
-                  <a href="{{ url_for('profile') }}" class="btn btn-primary stretched-link">
-                    <i class="fa-solid fa-id-card"></i>
-                    Go To Profile</a>
+                  <h5 class="card-title text-center">My Profile</h5>
+                  <a href="{{ url_for('profile') }}" class="btn btn-success ">
+                    <i class="fa-solid fa-id-card fa-4x"></i>
+                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Profile" class="card-img-top" alt="avatar">
+
+                    </a>
+                  <p class="card-text">Click here to update your profile </p>
+
+                  
                 </div>
             </div>
         </div>
 
         <div class="col-md-2 mb-2">
           <div class="card" style="width: 100%;">
-              <img src="https://api.dicebear.com/9.x/initials/svg?seed=Service Management" class="card-img-top" alt="avatar">
               <div class="card-body">
-                  <h5 class="card-title">Service Management</h5>
-                  <p class="card-text">Click here to add category of services and sub categories of packages in each service</p>
+                  <h5 class="card-title text-center">Service Management</h5>
                   <a href="{{url_for('add_category')}}" class="btn btn-success">
-                  <i class="fa-sharp-duotone fa-solid fa-user-tie"></i>
-    Service Management</a>
+                    <i class="fa-brands fa-buffer fa-5x"></i>
+                    <!-- <i class="fa-sharp-duotone fa-solid fa-user-tie fa-5x"></i> -->
+                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Service Management" class="card-img-top" alt="avatar">
+
+                  
+   </a>
+                  <p class="card-text">Click here to add category of services and sub categories of packages in each service</p>
+                  
   </div>
 </div>
 </div>
 
 <div class="col-md-2 mb-2">
   <div class="card" style="width: 100%;">
-      <img src="https://api.dicebear.com/9.x/initials/svg?seed=Professionals Management" class="card-img-top" alt="avatar">
       <div class="card-body">
-          <h5 class="card-title">Professionals Management</h5>
-          <p class="card-text">Click here to verify new professionals and overview the professionals activities on the platform</p>
+          <h5 class="card-title text-center">Professionals Management</h5>
           <a href="{{url_for('pending_professionals')}}" class="btn btn-success">
-          <i class="fa-sharp-duotone fa-solid fa-house-user"></i>
-          Professionals Management</a>
+
+          <i class="fa-sharp-duotone fa-solid fa-user-tie fa-5x"></i>
+          <img src="https://api.dicebear.com/9.x/initials/svg?seed=Professionals Management" class="card-img-top" alt="avatar">
+
+          </a>
+          <p class="card-text">Click here to verify new professionals and overview the professionals activities on the platform</p>
+          
 </div>
 </div>
 </div>
@@ -54,13 +64,16 @@ Admin dashboard
 
 <div class="col-md-2 mb-2">
   <div class="card" style="width: 100%;">
-      <img src="https://api.dicebear.com/9.x/initials/svg?seed= Client Management" class="card-img-top" alt="avatar">
       <div class="card-body">
-          <h5 class="card-title"> Client Management </h5>
-          <p class="card-text">Click here to monitor customers on the platform</p>
+          <h5 class="card-title text-center"> Client Management </h5>
           <a href="{{url_for('manage_customers')}}" class="btn btn-success">
-          <i class="fa-sharp-duotone fa-solid fa-users"></i>
-          Client Management</a>
+            
+          <i class="fa-sharp-duotone fa-solid fa-users fa-5x"></i>
+            <img src="https://api.dicebear.com/9.x/initials/svg?seed= Client Management" class="card-img-top" alt="avatar">
+
+        </a>
+          <p class="card-text">Click here to monitor customers on the platform</p>
+          
 </div>
 </div>
 </div>
@@ -68,27 +81,32 @@ Admin dashboard
     
 <div class="col-md-2 mb-2">
   <div class="card" style="width: 100%;">
-      <img src="https://api.dicebear.com/9.x/initials/svg?seed= Overview" class="card-img-top" alt="avatar">
       <div class="card-body">
-          <h5 class="card-title"> Overview </h5>
+          <h5 class="card-title text-center"> Overview </h5>
+          <a href="{{url_for('admin_bookings')}}" class="btn btn-success">
+            <i class="fa-solid fa-file-invoice fa-5x "></i>
+
+            <img src="https://api.dicebear.com/9.x/initials/svg?seed= Overview" class="card-img-top" alt="avatar">
+             </a>
+
           <p class="card-text">Click here to monitor all activities on the platform</p>
-          <a href="{{url_for('admin_bookings')}}" class="btn btn-primary">
-            <i class="fa-solid fa-calendar"></i>
-              Overview</a>
             </div>
           </div>
           </div>
 
           <div class="col-md-2 mb-2">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/glass/svg?seed= Catalogue" class="card-img-top" alt="avatar">
                 <div class="card-body">
-                    <h5 class="card-title"> Catalogue</h5>
+                    <h5 class="card-title text-center"> Catalogue</h5>
+                    <a href="{{ url_for('catalogue') }}" class="btn btn-success">
+                      <i class="fa fa-book fa-5x"></i>
+
+                      <img src="https://api.dicebear.com/9.x/initials/svg?seed= Catalogue" class="card-img-top" alt="avatar">
+
+                  </a>
                     <p class="card-text">Click here to view all services offered on the platform</p>
                     
-                    <a href="{{ url_for('catalogue') }}" class="btn btn-primary">
-                      <i class="fa fa-book"></i> Go to Catalogue
-                  </a>
+                    
                 </div>
                 </div>
                 </div>
