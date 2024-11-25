@@ -244,7 +244,9 @@ def register_adb_post():
 #---2a proffessional registration-----------------------------------
 @app.route('/register_pdb')
 def register_pdb():
-    return render_template('register_pdb.html')
+    categories=Category.query.all()
+    print(categories)
+    return render_template('register_pdb.html',categories=categories)
 
 @app.route('/register_pdb', methods=['POST'])
 def register_pdb_post():
@@ -309,7 +311,7 @@ def register_pdb_post():
     if professional and not professional.is_verified:
         professional = Professional.query.filter_by(user_id=user.id).first()
         return render_template('verify_prof.html',professional=professional)
-        
+
 
 
 @app.route('/admin/professionals')

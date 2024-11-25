@@ -1,64 +1,78 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Add category
+    Add Category
 {% endblock %}
 
-{% block content %}
-<h1 class="display-1">add category</h1>
-<form action="" method="post" class="form">
-    <div class="form-group">
-       <label for="name" class="form-label">Category Name:</label>
-       <input type="text"
-       name="name"
-       id="name"
-       class="form_control"
-       required>
-    </div>
+{% block content %}<div class="container mt-4">
+    <h2 class="display-4">
+        Add Service Class
+    </h2>
     
-    <div class="form_group">
-        <button type="submit" class="btn btn-success">
-            <i class="fa5 fa-plus"></i> 
-            Add
-        </button>
-    </div>
-</form>
-<h2 class="display-2">Categories</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Category ID</th>
-            <th>Category Name</th>
-            <th>No of Services</th>
-            <th>Actions</th>
-            
-        </tr>
-    </thead>
-    <tbody>
-       {% for category in categories %}
-       <tr>
-            <td>{{category.id}}</td>
-            <td>{{category.name}}</td>
-            <td>{{category.services|length}}</td>
-            <td>
-       
-            <a href="{{url_for('show_category', id=category.id)}}" class="btn btn-primary">
-                <i class="fas fa-search"></i>
-                Show
-            </a>
-            <a href="{{url_for('edit_category', id=category.id)}}" class="btn btn-primary">
-                <i class="fas fa-edit"></i>
-                Edit
-            </a>
-            <a href="{{url_for('delete_category', id=category.id)}}" class="btn btn-danger">
-                <i class="fas fa-trash"></i>
-                Delete
-            </a>
-            
-        </td>
-        </tr>
-         {% endfor %}
-    </tbody>
-</table>
+    <hr>
+    <h4>Would you like to?</h4>
 
+<div class="container mt-4">
+    <h1 class="display-4 text-center">Add Category</h1>
+    <form action="" method="post" class="form">
+        <div class="form-group">
+            <label for="name" class="form-label">Category Name:</label>
+            <input type="text" name="name" id="name" class="form-control" required>
+        </div>
+        <div class="form-group text-center mt-3">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add
+            </button>
+        </div>
+    </form>
+    <h2 class="display-5 text-center mt-5">Categories of Service Packages</h2>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Category Name</th>
+                <th>No of Services</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ category.id }}</td>
+                <td>{{ category.name }}</td>
+                <td>{{ category.services|length }}</td>
+                <td>
+                    <a href="{{ url_for('show_category', id=category.id) }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Show
+                    </a>
+                    <a href="{{ url_for('edit_category', id=category.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{{ url_for('delete_category', id=category.id) }}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block style %}
+<style>
+    .container {
+        max-width: 800px;
+        margin-top: 50px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .table {
+        margin-top: 30px;
+    }
+    .btn {
+        margin-top: 10px;
+    }
+</style>
 {% endblock %}

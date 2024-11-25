@@ -36,7 +36,6 @@ class Professional(db.Model):
     is_flagged = db.Column(db.Boolean, default=False)
     
     users = db.relationship('User', backref='professional', lazy=True)
-    # bookings = db.relationship('Booking', backref='professional', lazy=True)
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -44,7 +43,7 @@ class Customer(db.Model):
     email  = db.Column(db.String(80), nullable=False)
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
-# 
+
     users = db.relationship('User', backref='customer', lazy=True)
 
     is_blocked = db.Column(db.Boolean, default=False)
@@ -75,7 +74,7 @@ class Service(db.Model):
     schedules = db.relationship('Schedule', backref='service', lazy=True, cascade="all, delete-orphan")
     bookings = db.relationship('Booking', backref='service', lazy=True, cascade="all, delete-orphan")
 
-class Schedule(db.Model):#change to Request
+class Schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
@@ -132,4 +131,4 @@ with app.app_context():
             admin = User(username='admin', passhash=password_hash, role_id=admin_role_id)
             db.session.add(admin)
             db.session.commit()
-    
+
