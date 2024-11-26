@@ -714,7 +714,7 @@ def add_category_post():
     category = Category(name=name)
     db.session.add(category)
     db.session.commit()
-    flash("Category added successfully")
+    flash("Service_Type added successfully")
     return redirect(url_for('add_service', category_id=category.id))
 
 @app.route('/category/<int:id>/')
@@ -722,7 +722,7 @@ def add_category_post():
 def show_category(id):
     category=Category.query.get(id)
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     return render_template('category/show.html', category=category)
     #return("show category")
@@ -733,7 +733,7 @@ def edit_category(id):
     category=Category.query.get(id)
     
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     return render_template("category/edit.html", category=category)
 
@@ -742,7 +742,7 @@ def edit_category(id):
 def edit_category_post(id):
     category=Category.query.get(id)    
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin'))
     name=request.form.get('name')
     if not name:
@@ -750,8 +750,8 @@ def edit_category_post(id):
         return redirect(url_for('edit_category',id=id))
     category.name=name
     db.session.commit()
-    flash('Category updated successfully')  
-    return redirect(url_for('admin_db'))
+    flash('Service_Type updated successfully')  
+    return redirect(url_for('add_category'))
     
 
 @app.route('/category/<int:id>/delete')
@@ -759,7 +759,7 @@ def edit_category_post(id):
 def delete_category(id):
     category = Category.query.get(id)
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     return render_template('category/delete.html', category=category)
 
@@ -768,12 +768,12 @@ def delete_category(id):
 def delete_category_post(id):
     category = Category.query.get(id)
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     db.session.delete(category)
     db.session.commit()
-    flash('Category deleted successfully')
-    return redirect(url_for('admin_db'))
+    flash('Service_Type deleted successfully')
+    return redirect(url_for('add_category'))
 
 #----------- Add services packages in a category-----------------------------------
 @app.route('/service/add/<int:category_id>')
@@ -782,7 +782,7 @@ def add_service(category_id):
     category=Category.query.get(category_id)
     categories=Category.query.all() 
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     
     return render_template('service/add.html', category=category, categories=categories)
@@ -801,7 +801,7 @@ def add_service_post():
     category = Category.query.get(category_id)
 
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     if not name or not price or not type or not description or not location or not duration:
         flash('Please fill out the fields')
@@ -846,7 +846,7 @@ def edit_service_post(id):
     
     category = Category.query.get(category_id)
     if not category:
-        flash('Category does not exist')
+        flash('Service_Type does not exist')
         return redirect(url_for('admin_db'))
     if not name or not price or not type or not description:
         flash('Please fill out the fields')
