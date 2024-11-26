@@ -1,25 +1,30 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-   edit category
+   Edit Service_Type
 {% endblock %}
 
 {% block content %}
-<h1 class="display-1">edit category</h1>
-<form action="" method="post" class="form">
-    <div class="form-group">
-       <label for="name" class="form-label">Category Name:</label>
-       <input type="text"
-       name="name"
-       id="name"
-       class="form_control"
-       value="{{category.name}}"
-       required>
-    </div>
-    <div class="form_group">
-        <button type="submit" class="btn btn-success">
-            Update
-        </button>
-    </div>
-</form>
+<div class="container mt-5">
+    <h1 class="display-4 text-center mb-4 text-dark">Edit Service_Type</h1>
+    <form action="" method="post" class="form text-center">
+        <div class="mb-3 text-center">
+           <label for="name" class="form-label">Enter Service_Type Name To Update:</label>
+           <input 
+               type="text" 
+               name="name" 
+               id="name" 
+               class="form-control" 
+               placeholder ="{{ category.name }}" 
+               
+               required>
+        </div>
+        <div class="">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-edit fa-2x"></i>
+                Update
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}
