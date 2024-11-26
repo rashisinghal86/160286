@@ -715,7 +715,7 @@ def add_category_post():
     db.session.add(category)
     db.session.commit()
     flash("Category added successfully")
-    return redirect(url_for('add_category'))
+    return redirect(url_for('add_service', category_id=category.id))
 
 @app.route('/category/<int:id>/')
 @admin_reqd
@@ -930,6 +930,7 @@ def catalogue():
     price = request.args.get('price')
     location = request.args.get('location') or ''
     datetime = request.args.get('datetime') or ''
+    description = request.args.get('description') or ''
 
     if price:
         try:
@@ -943,7 +944,7 @@ def catalogue():
 
     if cname:
         categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
-    return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location, datetime=datetime)
+    return render_template('catalogue.html', categories=categories, cname=cname, sname=sname, price=price, location=location, datetime=datetime, description=description)
 
 @app.route('/add_to_schedule/<int:service_id>', methods=['POST'])
 @auth_reqd

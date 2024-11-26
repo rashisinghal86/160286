@@ -1,38 +1,35 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Add Category
+    Create Service_Type
 {% endblock %}
 
-{% block content %}<div class="container mt-4">
+{% block content %}
+<div class="container mt-4">
     <h2 class="display-4">
-        Add Service Class
+        Create Service_Type
     </h2>
     
     <hr>
-    <h4>Would you like to?</h4>
-
-<div class="container mt-4">
-    <h1 class="display-4 text-center">Add Category</h1>
+<div class="container mt-1">
     <form action="" method="post" class="form">
-        <div class="form-group">
-            <label for="name" class="form-label">Category Name:</label>
-            <input type="text" name="name" id="name" class="form-control" required>
-        </div>
         <div class="form-group text-center mt-3">
+            <label for="name" class="form-label"></label>
+            <input type="text" name="name" id="name" placeholder="Add Service_Type Name Here" class="form-control" required>
             <button type="submit" class="btn btn-success">
-                <i class="fas fa-plus"></i> Add
+                <i class="fa-solid fa-plus"></i> Add Type
+                
             </button>
         </div>
     </form>
-    <h2 class="display-5 text-center mt-5">Categories of Service Packages</h2>
+    <h5 class="display-5 text-center mt-5">List of Authorised Service_Types</h5>
     <table class="table table-striped mt-3">
         <thead>
             <tr>
-                <th>Category ID</th>
-                <th>Category Name</th>
-                <th>No of Services</th>
-                <th>Actions</th>
+                <th style="width: 10%">ID</th>
+                <th style="width: 15%">Service_Type</th>
+                <th style="width: 15%">Services Offered</th>
+                <th style="width: 60%; text-align:center;"> Management Tools</th>
             </tr>
         </thead>
         <tbody>
@@ -43,13 +40,12 @@
                 <td>{{ category.services|length }}</td>
                 <td>
                     <a href="{{ url_for('show_category', id=category.id) }}" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Show
-                    </a>
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> View Details                    </a>
                     <a href="{{ url_for('edit_category', id=category.id) }}" class="btn btn-warning">
-                        <i class="fas fa-edit"></i> Edit
+                        <i class="fas fa-edit"></i> Modify Type
                     </a>
                     <a href="{{ url_for('delete_category', id=category.id) }}" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fa-regular fa-trash-can"></i> Delete Type
                     </a>
                 </td>
             </tr>
@@ -74,5 +70,10 @@
     .btn {
         margin-top: 10px;
     }
+
+    input.form-control {
+            border: 3px solid #000; /* Change #000 to any desired color */
+            border-radius: 5px; /* Optional: Adjust corner rounding */
+        }
 </style>
 {% endblock %}

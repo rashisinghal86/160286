@@ -19,26 +19,32 @@
                     %}
                         <div class="card" style="width: 18rem; margin: 10px;">
                             <img
-    src="https://api.dicebear.com/9.x/icons/svg"
-  alt="avatar" seed="{{ service.name }}" class="card-img-top"
+    
 />
                             <img class="card-img-top" src="https://picsum.photos/200/200" alt="{{ service.name }}">
                             <div class="card-body">
                                 <h5 class="card-title">{{ service.name }}</h5>
                                 <p class="card-text">
-                                    <div class="price">
-                                        <strong>Price:</strong>
-                                        &#8377; {{ service.price }}
+                                    <div class="description">
+                                        <strong>Description:</strong>
+                                        {{ service.description }}
                                     </div>
                                     <div class="location">
                                         <strong>Location:</strong>
                                         {{ service.location }}
                                     </div>
+                                    <div class="price">
+                                        <strong>Price:</strong>
+                                        &#8377; {{ service.price }}
+                                    </div>
+                                    
+                                    
                                 </p>
                                 <div class="schedule_datetime">
                                     <form action="{{ url_for('add_to_schedule', service_id=service.id) }}" method="POST" class="form">
                                         <input type="datetime-local" name="schedule_datetime" class="form-control">
                                         <input type="hidden" name="location" value="{{ service.location }}">
+                                        <br>
                                         <input type="submit" value="Schedule Services" class="btn btn-success">
                                     </form>
                                 </div>
