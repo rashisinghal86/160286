@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="display-1">Add Service</h1>
+<div class="container mt-4">
+    <h2 class="display-4">
+        Add Details of Service
+    </h2>
+    <hr>
+    <div class="container mt-1">
+
     <form action="{{url_for('add_service_post')}}" method="post" class="form">
         <div class="form-group">
         <label for="name" class="form-label">Service Name:</label>
@@ -71,12 +77,12 @@
                 {% endfor %}
             </select>
     </div>
+    <br>
     <div class="form_group">
         <button type="submit" class="btn btn-success">
-            <i class="fa5 fa-plus"></i> 
-            Add
+            <i class="fa-solid fa-plus"></i> Add Type
+            
         </button>
-    </div>
     
         
     </form>
