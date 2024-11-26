@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="display-1">Edit Service</h1>
-<h5>add/edit duration work 2</h5>
+<div class="container mt-5">
+    <h1 class="display-4 text-center mb-4 text-dark">Edit Details of Service</h1>
+<h5></h5>
 <form action="{{url_for('edit_service_post', id=service.id)}}" method="post" class="form">
-    <div class="form-group">
-       <label for="name" class="form-label">Service Name:</label>
-       <input type="text" 
+    <div class="form-group><label for="name" class="form-label">Service Name:</label>
+       <input type="text " 
        name="name" 
        id="name" 
        class="form-control" 
@@ -57,13 +57,38 @@
             {% endfor %}
         </select>
    </div>
+   <br>
+
    <div class="form_group">
     <button type="submit" class="btn btn-success">
-        <i class="fa5 fa-plus"></i> 
-        Add
-    </button>
+                <i class="fas fa-edit fa-2x"></i>
+           Update     
 </div>
   
     
 </form>
+{% endblock %}
+
+{% block style %}
+<style>
+    .container {
+        max-width: 800px;
+        margin-top: 50px;
+    }
+    .form-group {
+        margin-top: 20px;
+    }
+    .btn {
+        margin-top: 20px;
+
+    }
+    input.form-control {
+        border: 3px solid #000; 
+        border-radius: 5px; 
+    }
+    select.form-control {
+        border: 3px solid #000; 
+        border-radius: 5px; 
+    }
+</style>
 {% endblock %}

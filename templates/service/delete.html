@@ -1,19 +1,18 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Delete service
+    Delete Service
 {% endblock %}
 
 {% block content %}
-<h1 class="display-1">Delete service</h1>
-<p class="f-3">Are you sure you want to delete {{service.name}}</p>
+<div class="container mt-5">
+    <h1 class="display-4 text-center mb-4 text-danger">Delete Service</h1>
+    <p class="fs-5 text-center">Are you sure you want to delete <strong>{{ service.type }} </strong>?</p>
 
-<form action="" method="post" class="form">
-    <div class="form_group">
-        <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash"></i> 
-            delete
+    <form action="" method="post" class="text-center">
+        <button type="submit" class="btn btn-danger btn-lg">
+            <i class="fas fa-trash-alt"></i> Delete
         </button>
-    </div>
-</form>
+    </form>
+</div>
 {% endblock %}
