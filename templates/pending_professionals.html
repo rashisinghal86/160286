@@ -49,10 +49,10 @@ Professionals Management
                 </td>
                 <td>
                     <form action="{{ url_for('approve_professional', id=professional.id) }}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        <button type="submit" class="btn btn-success btn-sm"><i class="fa-solid fa-thumbs-up"></i> Approve</button>
                     </form>
                     <form action="{{ url_for('block_professional', id=professional.id) }}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                        <button type="submit" class="btn btn-danger btn-sm" ><i class="fa-solid fa-circle-xmark"></i> Block</button>
                     </form>
                     
                 </td>
@@ -87,7 +87,7 @@ Professionals Management
                         <td>
                             
                             <form action="{{ url_for('block_professional', id=professional.id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                                <button type="submit" class="btn btn-danger btn-sm"> <i class="fa-solid fa-circle-xmark"></i>Block</button>
                             </form>
                             
                         </td>
@@ -123,7 +123,7 @@ Professionals Management
                         </td>
                         <td>
                             <form action="{{ url_for('unblock_professional', id=professional.id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-warning btn-sm">Unblock</button>
+                                <button type="submit" class="btn btn-warning btn-sm"><i class="fa-solid fa-circle-check"></i> Unblock</button>
                             </form>
                         </td>
                     </tr>
