@@ -1,11 +1,17 @@
 {% extends 'layout.html' %}
-{% block title %}
-Professionals Management#
-{% endblock %}
-{% block content %}
 
-<h1 class="display">Professionals Management</h1>
-<h2>add review button for proff</h2>
+{% block title %}
+Professionals Management
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="display-4">
+        Professionals Management
+    </h2>
+    
+    <hr>
+
 <a href="{{url_for('admin_db')}}" class="btn btn-primary">
     <i class="fa fa-angle-left"></i>
     back</a>
@@ -17,36 +23,13 @@ Professionals Management#
         <i class="fas fa-print" aria-hidden="true"></i>
         Print
     </button>
-    
-    <!-- add total in fron of each heading while doing css -->
 <hr>
-<!-- <div class="professionals-list">
-    {% for professional in professionals %}
-    {% if pservice_type != '' and pname.lower() in professional.name.lower() or not pname %}
-    {% if plocation != '' and plocation.lower() in professional.location.lower() or not plocation %}
-     
-    show search result
-        <div class="professional">
-            <h3>{{ professional.name }}</h3>
-            <p>{{ professional.location }}</p>
-            <p>{{ professional.service_type }}</p>
-            
-            <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success">Approve</a>
-            <a href="{{ url_for('block_professional', id=professional.id) }}" class="btn btn-danger">Block</a>
-            <a href="{{ url_for('unblock_professional', id=professional.id) }}" class="btn btn-warning">Unblock</a>
-        </div>
-        
-    {% endif %}
-    {% endif %} -->
-<!--         
-    {% endfor %} -->
-</div>
 
-<div class="container mt-5">
+<div class="container mt-1">
     <h2>Pending Professionals</h2>
-    <h6>Total Pending Professionals = {{pending_professionals|length}}</h6>
+    <h6 display-9>Total Pending Professionals = {{pending_professionals|length}}</h6>
     <hr>
-    <table class="table table-bordered">
+    <table class="table table-striped mt-3">
         <thead class="thead-dark">
             <tr>
                 <th>Name</th>
@@ -80,18 +63,10 @@ Professionals Management#
         </tbody>
     </table>
 </div>
-<!-- {%if pname%}
-{%for s in sp %}
-<li>
-    {{s.name}} | {{s.email}} | {{s.location}}
-</li>
-{%endfor%}
-{%endif%} -->
-
-        <div class="container mt-5">
+     <div class="container mt-5">
             <h2>Approved Professionals</h2>
-            <h6>total approved professionals = {{approved_professionals|length}}</h6>
-            <table class="table table-bordered">
+            <h6 >Total Approved Professionals = {{approved_professionals|length}}</h6>
+            <table class="table table-striped mt-3">
                 <thead class="thead-dark">
                     <tr>
                         <th>Name</th>
@@ -126,9 +101,9 @@ Professionals Management#
     
         <div class="container mt-5">
             <h2>Blocked Professionals</h2>
-            <h6>total Blocked professionals = {{blocked_professionals|length}}</h6>
+            <h6>Total Blocked Professionals = {{blocked_professionals|length}}</h6>
             
-            <table class="table table-bordered">
+            <table class="table table-striped mt-3">
                 <thead class="thead-dark">
                     <tr>
                         <th>Name</th>
@@ -161,4 +136,5 @@ Professionals Management#
     </div>
 </body>
 </html>
+</div>
 {% endblock %}
