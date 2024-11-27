@@ -67,7 +67,7 @@ def blocked_check(func):
 
 #----- home page-----
 @app.route('/')
-def index():
+def index(): 
     return render_template('homecss.html')
 
 @app.route('/home')
@@ -684,7 +684,7 @@ def admin_db():
     category_names = [category.name for category in categories]
     category_sizes = [len(category.services) for category in categories]
     
-    
+   
     pending_professionals = [Professional.query.filter_by(is_verified=False).count()]
     blocked_professionals = [Professional.query.filter_by(is_flagged=True).count()]
     approved_professionals = [Professional.query.filter_by(is_verified=True).count()]
@@ -692,7 +692,7 @@ def admin_db():
     blocked_customers = [Customer.query.filter_by(is_blocked=True).count()]
     unblocked_customers = [Customer.query.filter_by(is_blocked=False).count()]
 
-    return render_template('admin_db.html', categories=categories, category_names=category_names, category_sizes=category_sizes, blocked_professionals=blocked_professionals, pending_professionals=pending_professionals, approved_professionals=approved_professionals, blocked_customers=blocked_customers, unblocked_customers=unblocked_customers)
+    return render_template('admin_db.html',categories=categories, category_names=category_names, category_sizes=category_sizes, blocked_professionals=blocked_professionals, pending_professionals=pending_professionals, approved_professionals=approved_professionals, blocked_customers=blocked_customers, unblocked_customers=unblocked_customers)
 #----------------Add category pages-----------------------------------
 
 @app.route('/category/add')
