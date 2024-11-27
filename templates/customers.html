@@ -3,52 +3,60 @@
 Customers Management
 {% endblock %}
 {% block content %}
+<div class="container mt-5">
+    <div class="container mt-4">
+        <h2 class="display-4">Search Customers</h2>
+        <br>
 {% include 'searchbar3.html' with context %}
-<h1 class="display">Search Customers</h1>
-<a href="{{url_for('manage_customers')}}" class="btn btn-primary">
-    <i class="fa fa-angle-left"></i>
-    back
-</a>
-<hr>
-<h2>List Of All Customers</h2>
-<div class="customers-list">
-    {% for customer in customers %}
-        {% if 
-            (cname == '' or cname.lower() in customer.name.lower()) and
-            (clocation == '' or clocation.lower() in customer.location.lower())
-        %}
-        
+<br>
+
+
+    <a href="{{ url_for('manage_customers') }}" class="btn btn-primary">
+        <i class="fa fa-angle-left"></i>
+        Back
+    </a>
+    <hr>
+    <h5 class="display-5 text-center mt-5">Search from all Registered Customers</h5>
+
+    <div class="customers-list">
         <!-- show search result -->
-        
-            <div class="container mt-5">
-           
-            <table class="table table-bordered">
+        <div class="container mt-5">
+            <table class="table table-striped mt-3">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Actions</th>
+                        <th style="width: 20%">Name</th>
+                        <th style="width: 40%">Location</th>
+                        <th style="width: 30%">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>{{ customer.name }}</td>
-                        <td>{{ customer.location }}</td>
-                        <td>
-                            <form action="{{ url_for('block_customer', id=customer.id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm">Block</button>
-                            </form>
-                            <form action="{{ url_for('unblock_customer', id=customer.id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-warning btn-sm">Unblock</button>
-                            </form>
-                        </td>
-                    </tr>
+                    {% for customer in customers %}
+                        {% if 
+                            (cname == '' or cname.lower() in customer.name.lower()) and
+                            (clocation == '' or clocation.lower() in customer.location.lower())
+                        %}
+                        <tr>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.location }}</td>
+                            <td>
+                                <form action="{{ url_for('block_customer', id=customer.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-circle-xmark"></i> Block
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('unblock_customer', id=customer.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-circle-check"></i> Unblock
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
-        
-        {% endif %}
-        
-    {% endfor %}
+    </div>
 </div>
 {% endblock %}
+
