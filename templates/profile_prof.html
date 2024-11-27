@@ -17,7 +17,17 @@
                 <div class="profile-pic">
                     <img src="https://api.dicebear.com/9.x/bottts/svg?seed={{ prof_name }}" width="100" alt="avatar">
                 </div>
+                <div class="container mt-4">
+                    
+                    <p>Do you really want to delete your account?</p>   
+                        <p> This action is irreversable. Think Twice</p>
+                    <a href="/delete/prof" class="btn btn-dark btn-lg">
+                        <i class="fa-solid fa-skull-crossbones"></i>
+                        Delete my account permanently</a>
+
+                </div>
             </div>
+
 
             <!-- Edit form on the right -->
             <div class="col-md-6">
@@ -71,4 +81,5 @@
             </div>
         </div>
     </div>
+
 {% endblock %}

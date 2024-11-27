@@ -514,6 +514,40 @@ def signout():
     session.pop('user_id')
     return render_template('home.html')
 
+@app.route('/delete/prof')
+@auth_reqd
+def delete_prof():
+    user = User.query.get(session['user_id'])
+
+    if user:
+        professional = Professional.query.filter_by(user_id=user.id).first()
+        if professional:
+            db.session.delete(professional)
+        
+        db.session.delete(user)
+        db.session.commit()
+    else:
+        print("User not found.")
+
+    return render_template('home.html')
+
+@app.route('/delete/cust')
+@auth_reqd
+def delete_cust():
+    user = User.query.get(session['user_id'])
+
+    if user:
+        customer = Customer.query.filter_by(user_id=user.id).first()
+        if customer:
+            db.session.delete(customer)
+        
+        db.session.delete(user)
+        db.session.commit()
+    else:
+        print("User not found.")
+
+    return render_template('home.html')
+
 @app.route('/profile')
 @auth_reqd
 def profile():
