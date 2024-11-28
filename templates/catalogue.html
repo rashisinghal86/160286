@@ -2,58 +2,61 @@
 {% block content %}
     {% include 'searchbar.html' with context %}
 
-    <div>
-        <a href="{{ url_for('prof_byrating')}}">professionals list</a>
-    </div>
+   
     <hr>
-    <div class="categories-list">
-        {% for category in categories %}
-            <h2>{{ category.name }}</h2>
-            <div class="services">
-                {% for service in category.services %}
-                    {% if 
-                        (cname != '' and cname.lower() in category.name.lower() or not cname) and
-                        (sname != '' and sname.lower() in service.name.lower() or not sname) and
-                        (price is not none and price != '' and service.price <= price or not price) and
-                        (location != '' and location.lower() in service.location.lower() or not location)
-                    %}
-                        <div class="card" style="width: 18rem; margin: 10px;">
-                            <img
-    
-/>
-                            <img class="card-img-top" src="https://picsum.photos/200/200" alt="{{ service.name }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ service.name }}</h5>
-                                <p class="card-text">
-                                    <div class="description">
-                                        <strong>Description:</strong>
-                                        {{ service.description }}
+    <div class="container mt-4">
+        <div style="text-align: right;">
+            <a href="{{ url_for('prof_byrating') }}" class="btn btn-primary">View Registered Professionals with us.</a>
+        </div>
+
+        <div class="categories-list">
+            {% for category in categories %}
+            <h2 style="background-color: lightblue; padding: 10px; border-radius: 5px; text-transform: uppercase;">
+                <i class="fa fa-align-center" aria-hidden="true"></i>
+                {{ category.name }}
+            </h2>
+            
+                <div class="services">
+                    {% for service in category.services %}
+                        {% if 
+                            (cname != '' and cname.lower() in category.name.lower() or not cname) and
+                            (sname != '' and sname.lower() in service.name.lower() or not sname) and
+                            (price is not none and price != '' and service.price <= price or not price) and
+                            (location != '' and location.lower() in service.location.lower() or not location)
+                        %}
+                            <div class="card" style="width: 15rem; margin: 10px;">
+                                <img />
+                                <div class="card-body" style="background-color: bisque; padding: 15px; border-radius: 5px;">
+                                    <h5 class="card-title">{{ service.name }}</h5>
+                                    <p class="card-text">
+                                        <div class="description">
+                                            <strong>Description:</strong>
+                                            {{ service.description }}
+                                        </div>
+                                        <div class="location">
+                                            <strong>Location:</strong>
+                                            {{ service.location }}
+                                        </div>
+                                        <div class="price">
+                                            <strong>Price:</strong>
+                                            &#8377; {{ service.price }}
+                                        </div>
+                                    </p>
+                                    <div class="schedule_datetime" style="padding: 15px; text-align: center;">
+                                        <form action="{{ url_for('add_to_schedule', service_id=service.id) }}" method="POST" class="form">
+                                            <input type="datetime-local" name="schedule_datetime" class="form-control">
+                                            <input type="hidden" name="location" value="{{ service.location }}">
+                                            <br>
+                                            <input type="submit" value="Schedule Services" class="btn btn-success">
+                                        </form>
                                     </div>
-                                    <div class="location">
-                                        <strong>Location:</strong>
-                                        {{ service.location }}
-                                    </div>
-                                    <div class="price">
-                                        <strong>Price:</strong>
-                                        &#8377; {{ service.price }}
-                                    </div>
-                                    
-                                    
-                                </p>
-                                <div class="schedule_datetime">
-                                    <form action="{{ url_for('add_to_schedule', service_id=service.id) }}" method="POST" class="form">
-                                        <input type="datetime-local" name="schedule_datetime" class="form-control">
-                                        <input type="hidden" name="location" value="{{ service.location }}">
-                                        <br>
-                                        <input type="submit" value="Schedule Services" class="btn btn-success">
-                                    </form>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 
@@ -62,13 +65,19 @@
     .categories-list {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: right;
     }
     .services {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+        margin: 0 auto;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 5px;
     }
+    
     .card {
         margin: 10px;
     }
