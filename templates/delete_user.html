@@ -8,9 +8,9 @@
 
 <div class="container mt-4 d-flex justify-content-center">
         <div class="card" style="width: 100%; max-width: 800px;">
-            <div class="card-body">
+            <div class="card-body" style="color:tomato">
                 <h1 class="display-4 text-center">DELETE USER FROM PLATFORM!</h1>
-                <p class="fs-5 text-center">Are you sure you want to delete User?</p>
+                <p class="fs-5 text-center">Are you sure to remove Customer's/Professional's Account?</p>
                 <form action="{{url_for('delete_user')}}" class="form" method="POST">    
                     <div class="form-group">
                         <label for="username" class="form-label">Username</label>
@@ -38,9 +38,11 @@
 <style>
     .container {
         margin-top: 50px;
+        
     }
     .card {
         padding: 20px;
+        border: 1px
     }
     .form-group {
         margin-bottom: 15px;

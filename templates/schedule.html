@@ -1,13 +1,17 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <h1 class="display-1"> Schedule </h1>
-    
+    <h1 class="display-1">  
+    <a href="{{ url_for('catalogue') }}" class="btn btn-success">
+        <i class="fa-solid fa-book-open"></i>
+            <p class="card-text">view catalogue</p>
+    </a>
+    Requested Schedule Details </h1>
     
 
 <hr>
 {% if schedules|length > 0 %}
     
-<h5>check your schedule before proceeding</h5>
+
 
 <table class="table">
     <thead>
@@ -32,7 +36,7 @@
                 <form action="{{url_for('delete_schedule', id=schedule.id)}}" method="post">
                     <button class="btn btn-danger">
                         <i class="fas fa-trash"></i>
-                        Re-Schedule
+                        Delete Requested Schedule
                     </button>
                 </form>
             </td>

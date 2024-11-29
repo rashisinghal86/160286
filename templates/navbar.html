@@ -33,8 +33,9 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ url_for('signout')}}">Signout</a>  
         </li>
-          {% endif %}
-          {% if session['user_id'] == 2 %}
+          {% else %}
+
+          
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
           </li>
@@ -42,7 +43,7 @@
             <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">Edit Profile</a>
           </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{{ url_for('schedule') }}">Requests</a>  
+              <a class="nav-link active" aria-current="page" href="{{ url_for('schedule') }}">Schedules</a>  
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ url_for('bookings') }}">Bookings</a>
@@ -50,30 +51,12 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ url_for('signout')}}">Signout</a>  
         </li>
-          {% endif %}
-          {% if session['user_id'] == 3 %}
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
-          </li>
-            <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">Profile</a>
-          </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{{ url_for('schedule') }}">Requests</a>  
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('bookings') }}">Bookings</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('signout')}}">Signout</a>  
-        </li>
-
           {% endif %}
 
 
 
         
-        {% else %}
+      {% else %}
           <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{{ url_for('login') }}">Login</a>
         </li>

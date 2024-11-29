@@ -6,28 +6,8 @@ Admin Overview
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="display-4">View Listed Professional on Platform</h1>
+    <h1 class="display-4">View Rating & Reviews of Listed Professional</h1>
     <hr>
-
-    <h2>Professionals</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Professional ID</th>
-                <th>Professional Name</th>
-                <th>Location</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for professional in professionals %}
-            <tr>
-                <td>{{ professional.id }}</td>
-                <td>{{ professional.name }}</td>
-                <td>{{ professional.location }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
     <h2>Rating & Reviews of Professionals</h2>
     <table class="table table-striped">
@@ -59,5 +39,27 @@ Admin Overview
             {% endfor %}
         </tbody>
     </table>
+
+    <h2>All Listed Professionals</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Professional ID</th>
+                <th>Professional Name</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for professional in professionals %}
+            <tr>
+                <td>{{ professional.id }}</td>
+                <td>{{ professional.name }}</td>
+                <td>{{ professional.location }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
 </div>
 {% endblock %}

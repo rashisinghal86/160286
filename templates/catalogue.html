@@ -1,14 +1,14 @@
 {% extends 'layout.html' %}
 {% block content %}
+<br>
     {% include 'searchbar.html' with context %}
-
-   
-    <hr>
+<hr>
     <div class="container mt-4">
         <div style="text-align: right;">
-            <a href="{{ url_for('prof_byrating') }}" class="btn btn-primary">View Registered Professionals with us.</a>
+            
+            <a href="{{ url_for('prof_byrating') }}" class="btn btn-secondary"> <i class="fa-solid fa-user-tie"></i>View Registered Professionals with us.</a>
         </div>
-
+<br>
         <div class="categories-list">
             {% for category in categories %}
             <h2 style="background-color: lightblue; padding: 10px; border-radius: 5px; text-transform: uppercase;">
