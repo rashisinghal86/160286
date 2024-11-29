@@ -14,41 +14,53 @@ Customer Dashboard
     <div class="row">
         <div class="col-md-2 mb-2">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/initials/svg?seed=Profile" class="card-img-top" alt="avatar">
                 <div class="card-body">
-                    <h5 class="card-title">My Profile</h5>
+                    <h5 class="card-title text-center">My Profile</h5>
+                    <a href="{{ url_for('profile') }}" class="btn btn-success">
+                        <i class="fa-solid fa-id-card fa-4x"></i>
+                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Profile" class="card-img-top" alt="avatar">
+
                     <p class="card-text">Edit Profile | Change Password</p>
-                    <a href="{{ url_for('profile') }}" class="btn btn-primary stretched-link">Go To Profile</a>
+                </a>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-2 mb-2">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/initials/svg?seed=Catalogue" class="card-img-top" alt="avatar">
                 <div class="card-body">
-                    <h5 class="card-title">Catalogue</h5>
+                    <h5 class="card-title text-center">Catalogue</h5>
+                    <a href="{{ url_for('catalogue') }}" class="btn btn-success">
+                        <i class="fa fa-book fa-5x"></i>
+                        <img src="https://api.dicebear.com/9.x/initials/svg?seed=Catalogue" class="card-img-top" alt="avatar">
                     <p class="card-text">Click here to view catalogue of services</p>
-                    <a href="{{ url_for('catalogue') }}" class="btn btn-primary stretched-link">Catlogue</a>
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-2 mb-2">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/initials/svg?seed=Schedules" class="card-img-top" alt="avatar">
                 <div class="card-body">
-                    <h5 class="card-title">Schedules</h5>
-                    <p class="card-text">Take a look at your service requests</p>
-                    <a href="{{ url_for('schedule') }}" class="btn btn-primary stretched-link">View My Schedules</a>
+                    <h5 class="card-title text-center"> View My Schedules</h5>
+                    <a href="{{ url_for('schedule') }}" class="btn btn-success">
+                        <i class="fa-brands fa-buffer fa-5x"></i>
+
+                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Schedules" class="card-img-top" alt="avatar">
+
+                    <p class="card-text">Take a look at your requested services</p>
+                   </a>
                 </div>
             </div>
         </div>       
-        <div class="col-md-3 mb-3">
+        <div class="col-md-2 mb-2">
             <div class="card" style="width: 100%;">
-                <img src="https://api.dicebear.com/9.x/initials/svg?seed=Bookings" class="card-img-top" alt="avatar">
-                <div class="card-body">
-                    <h5 class="card-title">My Bookings</h5>
-                    <p class="card-text">Confirmed schedules list</p>
-                    <a href="{{ url_for('bookings') }}" class="btn btn-primary stretched-link">View My Bookings</a>
+                <div class="card-body text-center">
+                    <h5 class="card-title"> View My Bookings</h5>
+                    <a href="{{ url_for('bookings') }}" class="btn btn-success">
+                    <i class="fa-sharp-duotone fa-solid fa-user-tie fa-5x"></i>
+                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Bookings" class="card-img-top" alt="avatar">
+
+                    <p class="card-text">Take a look at your confirmed booking</p>
+                   </a>
                 </div>
             </div>
         </div>
@@ -73,5 +85,6 @@ Customer Dashboard
         justify-content: center;
         align-items: center;
     }
+    
 </style>
 {% endblock %}
