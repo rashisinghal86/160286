@@ -571,7 +571,7 @@ def delete_user_post():
     
     if not user:
         flash('User does not exist')
-        return redirect(url_for('delete_user'))
+        
     
     prof=Professional.query.filter_by(user_id=user.id).first()
     if prof:
@@ -1160,7 +1160,7 @@ def confirm(id):
         
         schedule = Schedule.query.get(id)
         if not schedule or schedule.is_accepted:
-            flash('No pending schedule to accept')
+            # flash('No pending schedule to accept')
             return redirect(url_for('pending_booking'))
         
         transaction = Transaction(customer_id=schedule.customer_id, professional_id=professional.id, amount=0, datetime=datetime.now(), status='Accepted')
