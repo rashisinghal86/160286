@@ -529,7 +529,7 @@ def delete_prof():
     else:
         print("User not found.")
 
-    return render_template('home.html')
+    return render_template('homecss.html')
 
 @app.route('/delete/cust')
 @auth_reqd
@@ -546,7 +546,9 @@ def delete_cust():
     else:
         print("User not found.")
 
-    return render_template('home.html')
+    return render_template('homecss.html')
+
+
 
 @app.route('/delete/user/')
 @admin_reqd
@@ -559,15 +561,17 @@ def delete_user():
         return redirect(url_for('admin_db'))
     return render_template('delete_user.html',user=user, professional=professional, customer=customer)
 
-@app.route('/delete/user/', methods=['POST'])
+
+
+@app.route('/delete/user/post', methods=['POST'])
 @admin_reqd
 def delete_user_post():
     username=request.form.get('username')
     user = User.query.filter_by(username=username).first()
+    
     if not user:
         flash('User does not exist')
-        return redirect(url_for('admin_db'))
-    print(user)
+        return redirect(url_for('delete_user'))
     
     prof=Professional.query.filter_by(user_id=user.id).first()
     if prof:
@@ -575,6 +579,7 @@ def delete_user_post():
     cust=Customer.query.filter_by(user_id=user.id).first()
     if cust:
         db.session.delete(cust)
+
 
     
     db.session.delete(user)
