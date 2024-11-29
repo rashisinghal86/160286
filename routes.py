@@ -548,6 +548,81 @@ def delete_cust():
 
     return render_template('home.html')
 
+@app.route('/delete/control')
+@admin_reqd
+def delete_control():
+    user = User.query.all()
+
+    if not user:
+        flash('User does not exist')
+        return redirect(url_for('admin_db'))
+    return render_template('delete_control.html',user=user)
+
+
+@app.route('/delete/control', methods=['POST'])
+@admin_reqd
+def delete_control_post():
+    username=request.form.get('username')
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        flash('User does not exist')
+        return redirect(url_for('admin_db'))
+    print(user)
+    
+    # Professional=Professional.query.filter_by(user_id=user.id).first()
+    # if Professional:
+    #     db.session.delete(Professional)
+    # Customer=Customer.query.filter_by(user_id=user.id).first()
+    # if Customer:
+    #     db.session.delete(Customer)
+
+    
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully')
+    return redirect(url_for('delete_control'))
+
+
+@app.route('/delete/user/')
+@admin_reqd
+def delete_user():
+    user = User.query.all()
+    professional = Professional.query.all()
+    customer = Customer.query.all()
+    if not user:
+        flash('User does not exist')
+        return redirect(url_for('admin_db'))
+    return render_template('delete_user.html',user=user, professional=professional, customer=customer)
+
+@app.route('/delete/user/', methods=['POST'])
+@admin_reqd
+def delete_user_post():
+    username=request.form.get('username')
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        flash('User does not exist')
+        return redirect(url_for('admin_db'))
+    print(user)
+    
+    prof=Professional.query.filter_by(user_id=user.id).first()
+    if prof:
+        db.session.delete(prof)
+    cust=Customer.query.filter_by(user_id=user.id).first()
+    if cust:
+        db.session.delete(cust)
+
+    
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully')
+    return redirect(url_for('delete_user'))
+
+
+           
+
+            
+
+
 @app.route('/profile')
 @auth_reqd
 def profile():
