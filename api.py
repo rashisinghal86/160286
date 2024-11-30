@@ -1,6 +1,6 @@
 from flask_restful import Resource, Api, reqparse
 from app import app
-from models import Category, db
+from models import Category, db, Service
 
 api = Api(app)
 

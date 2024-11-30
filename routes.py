@@ -561,31 +561,26 @@ def delete_user():
         return redirect(url_for('admin_db'))
     return render_template('delete_user.html',user=user, professional=professional, customer=customer)
 
-
-
 @app.route('/delete/user/post', methods=['POST'])
 @admin_reqd
 def delete_user_post():
-    username=request.form.get('username')
-    user = User.query.filter_by(username=username).first()
-    
+    id = request.form.get('id')
+    # username=request.form.get('username')
+    user = User.query.filter_by(id=id).first()    
     if not user:
-        flash('User does not exist')
-        
-    
+        flash('User does not exist')      
     prof=Professional.query.filter_by(user_id=user.id).first()
     if prof:
         db.session.delete(prof)
     cust=Customer.query.filter_by(user_id=user.id).first()
     if cust:
         db.session.delete(cust)
-
-
     
     db.session.delete(user)
     db.session.commit()
     flash('User deleted successfully')
     return redirect(url_for('delete_user'))
+
 
 
            
