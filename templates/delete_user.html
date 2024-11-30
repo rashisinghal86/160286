@@ -1,7 +1,7 @@
 </div>{% extends'layout.html'%}
 
 {% block title %}
-<h1>Delete USER from Platform</h1>   
+<h1>Delete User from Platform</h1>   
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
                 <p class="fs-5 text-center">Are you sure to remove Customer's/Professional's Account?</p>
                 <form action="{{ url_for('delete_user_post') }}" class="form" method="post">    
                     <div class="form-group">
-                        <label for="id" class="form-label">ID</label>
+                        <label for="id" class="form-label">UniqueID</label>
                         <input type="id" name="id" required class="form-control">
                     </div>
                 
