@@ -1104,6 +1104,43 @@ def schedule():
     else:
         flash('You are not authorized to access this page')
         return redirect(url_for('home'))
+    
+@app.route('/schedule/<int:id>/edit')
+@auth_reqd
+def edit_schedule(id):
+    
+    schedule = Schedule.query.get(id)
+    return render_template('schedule_edit.html', schedule=schedule)
+
+@app.route('/schedule/<int:id>/edit', methods=['POST'])
+@auth_reqd
+def edit_schedule_post(id):
+    schedule = Schedule.query.get(id)
+    if not schedule:
+        flash('schedule not found')
+        return  render_template(schedule.html)
+    print(schedule)
+    edit_sch = request.form.get('schedule_datetime')
+    print(schedule.schedule_datetime)
+    schedule_datetime_str = request.form.get('schedule_datetime')
+    try:
+        schedule_datetime = datetime.strptime(schedule_datetime_str, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        flash('Invalid date format')
+        return redirect(url_for('catalogue'))
+    
+    if schedule_datetime < datetime.now():
+        flash('Date & booking cannot be in the past')
+        return redirect(url_for('catalogue'))
+    schedule_datetime_obj = datetime.fromisoformat( edit_sch)
+    schedule.schedule_datetime = schedule_datetime_obj
+    
+    
+    db.session.commit()
+    flash('schedule updated')
+    schedules = Schedule.query.filter_by(customer_id=session['user_id']).all()
+    return render_template('schedule.html',schedule=schedule,schedules=schedules)
+
         
         
 

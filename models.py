@@ -9,7 +9,7 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)  # 'admin', 'customer', 'service_professional'
    
-users = db.relationship('User', backref='role', lazy=True)
+
 
 class User(db.Model):
     
@@ -19,7 +19,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     
-    roles= db.relationship('Role', backref='user', lazy=True)
+    
 
 class Professional(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,7 +35,6 @@ class Professional(db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     is_flagged = db.Column(db.Boolean, default=False)
     
-    users = db.relationship('User', backref='professional', lazy=True)
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -44,7 +43,6 @@ class Customer(db.Model):
     contact = db.Column(db.String(80), nullable=False)
     location = db.Column(db.String(80), nullable=False)
 
-    users = db.relationship('User', backref='customer', lazy=True)
 
     is_blocked = db.Column(db.Boolean, default=False)
 
